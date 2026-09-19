@@ -69,15 +69,15 @@ final class CategoryService {
     /// 4. 提取并返回 results 数组（忽略分页元数据）| Extract and return results array
     ///    (ignore pagination metadata)
     func getCategories() async throws -> [Category] {
-        // 泛型 <PaginatedCategoryList> 期望响应为分页列表
-        // Generic <PaginatedCategoryList> expects response as paginated list
-        let paginated: PaginatedCategoryList = try await client.request(path: "/categories/")
+        var page: PaginatedCategoryList = try await client.request(path: "/categories/")
+        var categories = page.results
 
-        // 返回分页对象中的实际项目数组
-        // Return the actual array of items from paginated object
-        // 通常类别不会太多（可能只有10-30个），所以一页就足够了
-        // Usually categories aren't too many (maybe only 10-30), so one page is enough
-        return paginated.results
+        while let next = page.next {
+            page = try await client.requestURL(next)
+            categories.append(contentsOf: page.results)
+        }
+
+        return categories
     }
 
     // MARK: - Create Category

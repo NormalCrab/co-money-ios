@@ -27,6 +27,10 @@ struct TransactionDetailView: View {
     // 用於刪除後返回列表
     @Environment(\.dismiss)                private var dismiss
 
+    private var currentTransaction: Transaction {
+        vm.transaction(matching: transaction.id) ?? transaction
+    }
+
     // MARK: - State: Modal & Dialog Control (模態狀態)
     // 編輯模態是否顯示
     @State private var showEdit          = false
@@ -35,6 +39,8 @@ struct TransactionDetailView: View {
     @State private var showDeleteConfirm = false
 
     var body: some View {
+        let transaction = currentTransaction
+
         // List: 以列表形式展示詳情（提供自動分組、間距管理）
         // Using List instead of VStack provides native iOS appearance
         List {

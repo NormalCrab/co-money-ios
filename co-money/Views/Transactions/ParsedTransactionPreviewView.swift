@@ -43,15 +43,9 @@ struct DraftTransaction: Identifiable {
     var transactionType: TransactionType
     var transactionDate: Date
 
-    // MARK: - 分類欄位：雙重存儲模式
-    /// 後端解析結果中的分類名稱（顯示用）
-    /// 保持原始的後端返回值，用於 UI 顯示
-    var categoryName: String?
-
-    /// 本地分類 ID（提交用）
-    /// 由本地分類列表解析得出，對應 Category.id
-    /// 用於提交時指定分類
-    var categoryId: String?
+    // MARK: - 分類欄位
+    /// 分類文字標籤，直接提交給後端。
+    var categoryName: String
 
     // MARK: - 其他欄位
     var notes: String?
@@ -63,20 +57,14 @@ struct DraftTransaction: Identifiable {
     /// 轉換邏輯：
     /// 1. 直接複製基本欄位
     /// 2. 使用預設幣種和帳戶（若後端未返回）
-    /// 3. 通過名稱匹配本地分類列表，解析出 categoryId
+    /// 3. 保留後端解析回傳的分類文字，供使用者確認或修改
     ///
     /// 參數：
     /// - tx: 後端解析的交易
     /// - defaultCurrency: 預設幣種（來自用戶設定）
     /// - defaultAccountIds: 預設帳戶（來自用戶設定）
-    /// - categories: 本地分類列表（用於名稱→ID 匹配）
+    /// - categories: 本地分類列表（保留參數以維持呼叫端流程）
     static func from(_ tx: Transaction, defaultCurrency: String, defaultAccountIds: [String], categories: [Category]) -> DraftTransaction {
-        // 解析分類：通過名稱匹配本地分類，取得 ID
-        // 後端返回的是分類名稱，需要匹配本地 ID
-        let catId = tx.category.flatMap { name in
-            categories.first { $0.name == name }?.id
-        }
-
         return DraftTransaction(
             originalId:      tx.id,        // 保留後端回傳的原始 ID
             description:     tx.description,
@@ -84,8 +72,7 @@ struct DraftTransaction: Identifiable {
             currency:        tx.currency ?? defaultCurrency,
             transactionType: tx.transactionType,
             transactionDate: tx.transactionDate,
-            categoryName:    tx.category,  // 保留原始名稱
-            categoryId:      catId,        // 解析出的本地 ID
+            categoryName:    tx.category ?? "",
             notes:           tx.notes,
             accountIds:      defaultAccountIds  // 使用預設帳戶
         )
@@ -359,8 +346,8 @@ private struct DraftTransactionRow: View {
 
                         HStack(spacing: 6) {
                             // 分類徽章
-                            if let cat = draft.categoryName, !cat.isEmpty {
-                                Text(cat)
+                            if !draft.categoryName.isEmpty {
+                                Text(draft.categoryName)
                                     .font(.caption2.bold())
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 2)
@@ -465,30 +452,26 @@ private struct DraftTransactionRow: View {
 
                     // MARK: - 分類選擇
 
-                    if !categories.isEmpty {
-                        HStack {
-                            Text("分類")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .frame(width: 50, alignment: .leading)
-                            // Picker 直接綁定到 $draft.categoryId
-                            Picker("", selection: $draft.categoryId) {
-                                Text("無").tag(String?.none)
+                    HStack {
+                        Text("分類")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 50, alignment: .leading)
+                        TextField("分類", text: $draft.categoryName)
+                            .font(.subheadline)
+
+                        if !categories.isEmpty {
+                            Picker("", selection: $draft.categoryName) {
+                                Text("無").tag("")
                                 ForEach(categories) { cat in
                                     HStack {
                                         if let icon = cat.icon, !icon.isEmpty { Text(icon) }
                                         Text(cat.name)
-                                    }.tag(Optional(cat.id))
+                                    }.tag(cat.name)
                                 }
                             }
                             .labelsHidden()
                             .pickerStyle(.menu)
-
-                            // onChange: 當分類 ID 改變時，同步更新分類名稱
-                            // Sync categoryName when categoryId changes
-                            .onChange(of: draft.categoryId) { _, newId in
-                                draft.categoryName = categories.first { $0.id == newId }?.name
-                            }
                         }
                     }
 

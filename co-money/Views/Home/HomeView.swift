@@ -280,7 +280,7 @@ struct HomeView: View {
                         .buttonStyle(.plain) /// 移除默認按鈕樣式 (Remove default button styling)
                         .tag(idx) /// 標籤用於 selection 綁定 (Tag for selection binding)
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 4)
                     }
                 }
                 /// tabViewStyle 設置 TabView 的外觀
@@ -288,7 +288,7 @@ struct HomeView: View {
                 /// .page(indexDisplayMode: .always) 顯示分頁指示器（底部點）
                 /// .page(indexDisplayMode: .always) shows page indicators (bottom dots)
                 .tabViewStyle(.page(indexDisplayMode: .always))
-                .frame(minHeight: 230)
+                .frame(height: 178)
                 // MARK: Lazy Load: 滑到卡片或切月時，從各自的權威 endpoint 載入
                 // Lazy-load the data for whichever card the user is viewing.
                 // - "personal" → /transactions/mine/
@@ -334,11 +334,16 @@ struct HomeView: View {
                             forAccountId: card.accountId,
                             categories:   profileVM.categories
                         )
+                        let payerSpending = txVM.payerSpendingBreakdown(forAccountId: card.accountId)
 
                         VStack(spacing: 12) {
                             /// 顯示支出分析柱狀圖
                             /// Show spending analysis bar chart
                             SpendingAnalysisBar(summary: summary)
+
+                            if !payerSpending.isEmpty {
+                                PayerSpendingCard(items: payerSpending)
+                            }
 
                             /// 條件性顯示分類分解卡片
                             /// Conditionally show category breakdown card
@@ -356,6 +361,9 @@ struct HomeView: View {
                         .padding(.bottom, 20)
                     }
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
+                voiceInputShortcut
             }
             .background(Color(.systemGroupedBackground)) /// iOS 系統背景色 (iOS system background)
             .navigationBarTitleDisplayMode(.inline)
@@ -416,14 +424,22 @@ struct HomeView: View {
                         } label: {
                             Image(systemName: "chevron.left")
                                 .font(.caption.bold())
+                                .opacity(txVM.isChangingMonth ? 0.35 : 1)
                         }
-                        .disabled(!txVM.hasPreviousMonth || txVM.isChangingMonth)
+                        .disabled(!txVM.hasPreviousMonth)
 
                         /// 月份顯示（可點擊返回當月）
                         /// Month display (tappable to return to current)
-                        Text(monthDisplay)
-                            .font(.subheadline.bold())
-                            .frame(minWidth: 90) /// 固定最小寬度 (Fixed minimum width)
+                        HStack(spacing: 6) {
+                            Text(monthDisplay)
+                                .font(.subheadline.bold())
+
+                            if txVM.isChangingMonth {
+                                ProgressView()
+                                    .controlSize(.mini)
+                            }
+                        }
+                        .frame(minWidth: 112) /// 固定最小寬度 (Fixed minimum width)
 
                         /// 下一月按鈕 — 同上，統一切共用月份。
                         /// Next month — same single-source-of-truth approach.
@@ -433,8 +449,9 @@ struct HomeView: View {
                         } label: {
                             Image(systemName: "chevron.right")
                                 .font(.caption.bold())
+                                .opacity(txVM.isChangingMonth ? 0.35 : 1)
                         }
-                        .disabled(!txVM.hasNextMonth || txVM.isChangingMonth)
+                        .disabled(!txVM.hasNextMonth)
                     }
                     .foregroundStyle(.primary)
                 }
@@ -555,6 +572,49 @@ struct HomeView: View {
                 .environment(profileVM)
         }
     }
+
+    private var voiceInputShortcut: some View {
+        HStack(spacing: 10) {
+            shortcutButton(
+                title: "語音",
+                systemImage: "mic.fill",
+                color: .accentColor
+            ) {
+                showVoice = true
+            }
+
+            shortcutButton(
+                title: "相機",
+                systemImage: "camera.fill",
+                color: .orange
+            ) {
+                showReceipt = true
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 6)
+        .background(.ultraThinMaterial)
+    }
+
+    private func shortcutButton(
+        title: String,
+        systemImage: String,
+        color: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.headline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .foregroundStyle(.white)
+                .background(color)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: color.opacity(0.24), radius: 8, y: 3)
+        }
+        .buttonStyle(.plain)
+    }
 }
 
 // MARK: - Account Summary Card
@@ -657,9 +717,9 @@ struct AccountSummaryCard: View {
             HStack(alignment: .top) {
                 /// 左側：標題和副標題
                 /// Left: title and subtitle
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.title3.bold())
+                        .font(.headline.bold())
                         .foregroundStyle(.white)
 
                     /// 條件性顯示副標題
@@ -702,13 +762,13 @@ struct AccountSummaryCard: View {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     /// +/- 符號 (Plus/minus sign)
                     Text(summary.primary.balance >= 0 ? "+" : "-")
-                        .font(.title3.bold())
+                        .font(.headline.bold())
                         .foregroundStyle(.white.opacity(0.9))
 
                     /// 金額文本 - 大型、粗體、圓形數字字體
                     /// Amount text - large, bold, rounded digit font
                     Text(summary.primary.balanceText)
-                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .minimumScaleFactor(0.5) /// 如果超寬，允許縮放至 50%
                         .lineLimit(1) /// 防止換行 (Prevent line break)
@@ -733,7 +793,7 @@ struct AccountSummaryCard: View {
                 }
             }
 
-            Spacer().frame(height: 10) /// 固定間距 (Fixed spacing)
+            Spacer().frame(height: 6) /// 固定間距 (Fixed spacing)
 
             // ── 收入 / 支出 - 主要貨幣；其他內聯顯示
             // Income / Expense - primary currency; others shown inline
@@ -800,12 +860,81 @@ struct AccountSummaryCard: View {
                     .foregroundStyle(.white.opacity(0.5))
             }
         }
-        .padding(20)
+        .padding(16)
         .frame(maxWidth: .infinity) /// 卡片填滿水平空間 (Card fills horizontal space)
-        .frame(minHeight: 200) /// 最小高度確保可讀性 (Min height for readability)
+        .frame(height: 152) /// 固定較小高度，讓下方資訊更早出現
         .background(gradient) /// 應用梯度背景 (Apply gradient background)
         .clipShape(RoundedRectangle(cornerRadius: 20)) /// 圓角矩形 (Rounded rectangle)
         .shadow(color: .black.opacity(0.15), radius: 12, y: 6) /// 投影效果 (Drop shadow)
+    }
+}
+
+// MARK: - Payer Spending Card
+
+struct PayerSpendingCard: View {
+    let items: [PayerSpendingItem]
+
+    private var maxTotal: Double {
+        items.map(\.total).max() ?? 0
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "person.2.fill")
+                    .foregroundStyle(.blue)
+                Text("成員花費")
+                    .font(.footnote.bold())
+                    .foregroundStyle(.secondary)
+            }
+
+            VStack(spacing: 10) {
+                ForEach(items.prefix(4)) { item in
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(item.name)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.primary)
+                                .lineLimit(1)
+
+                            Spacer()
+
+                            Text(amountText(for: item))
+                                .font(.caption.monospacedDigit().weight(.semibold))
+                                .foregroundStyle(.primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                        }
+
+                        GeometryReader { geo in
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.blue.opacity(0.14))
+                                .overlay(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.blue)
+                                        .frame(width: barWidth(for: item, in: geo.size.width))
+                                }
+                        }
+                        .frame(height: 6)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+    }
+
+    private func amountText(for item: PayerSpendingItem) -> String {
+        item.perCurrency
+            .map { AmountFormatter.format($0.amount, currency: $0.currency) }
+            .joined(separator: " / ")
+    }
+
+    private func barWidth(for item: PayerSpendingItem, in availableWidth: CGFloat) -> CGFloat {
+        guard maxTotal > 0 else { return 0 }
+        return max(0, availableWidth * CGFloat(item.total / maxTotal))
     }
 }
 

@@ -55,6 +55,7 @@ struct AccountDetailView: View {
                 currentMonth: currentMonth,
                 hasPrevious:  hasPrevious,
                 hasNext:      hasNext,
+                isLoading:    isLoading,
                 onPrevious:   { Task { await navigatePrevious() } },
                 onNext:       { Task { await navigateNext() } }
             )

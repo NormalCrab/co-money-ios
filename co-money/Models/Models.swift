@@ -209,7 +209,7 @@ struct Transaction: Codable, Identifiable {
     /// 交易类型：收入或支出 | Transaction type: INCOME or EXPENSE
     var transactionType: TransactionType
 
-    /// 交易分类名称（关联到Category） | Category name (associated with a Category)
+    /// 交易分类名称 | Category label stored on the transaction
     let category: String?
 
     /// 进行交易的用户 | User who made this transaction
@@ -225,9 +225,6 @@ struct Transaction: Codable, Identifiable {
     /// Account IDs involved (used when creating/updating to specify which accounts are affected)
     var accountIds: [String]?
 
-    /// 分类ID（关联到具体的Category对象）| Category ID (references a specific Category)
-    var categoryId: String?
-
     /// 交易备注 | Transaction notes/memo
     var notes: String?
 
@@ -237,7 +234,6 @@ struct Transaction: Codable, Identifiable {
         case transactionType = "transaction_type"    // API: "transaction_type"
         case transactionDate = "transaction_date"    // API: "transaction_date"
         case accountIds = "account_ids"              // API: "account_ids"
-        case categoryId = "category_id"              // API: "category_id"
     }
 
     /// 自訂解碼器：容許 backend 對部分欄位回傳 null、數字或簡化格式。
@@ -272,7 +268,6 @@ struct Transaction: Codable, Identifiable {
         transactionDate = (try? c.decode(Date.self, forKey: .transactionDate)) ?? Date()
         accounts = (try? c.decodeIfPresent([SharedAccountLite].self, forKey: .accounts)) ?? []
         accountIds = try? c.decodeIfPresent([String].self, forKey: .accountIds)
-        categoryId = try? c.decodeIfPresent(String.self, forKey: .categoryId)
         notes = try? c.decodeIfPresent(String.self, forKey: .notes)
     }
 }
@@ -753,18 +748,29 @@ struct CreateTransactionRequest: Codable {
     /// 交易关联的账户ID列表 | List of account IDs involved in this transaction
     var accountIds: [String]
 
-    /// 分类ID | Category ID to categorize this transaction
-    var categoryId: String?
+    /// 分類文字標籤 | Plain-text category label
+    var category: String?
 
     /// 交易备注 | Transaction notes
     var notes: String?
 
     /// JSON字段映射 | JSON field name mappings
     enum CodingKeys: String, CodingKey {
-        case description, amount, currency, notes
+        case description, amount, currency, category, notes
         case transactionType = "transaction_type"    // API: "transaction_type"
         case transactionDate = "transaction_date"    // API: "transaction_date"
         case accountIds = "account_ids"              // API: "account_ids"
-        case categoryId = "category_id"              // API: "category_id"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(description, forKey: .description)
+        try container.encode(amount, forKey: .amount)
+        try container.encodeIfPresent(currency, forKey: .currency)
+        try container.encode(transactionType, forKey: .transactionType)
+        try container.encode(transactionDate, forKey: .transactionDate)
+        try container.encode(accountIds, forKey: .accountIds)
+        try container.encodeIfPresent(category, forKey: .category)
+        try container.encodeIfPresent(notes, forKey: .notes)
     }
 }

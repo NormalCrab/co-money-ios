@@ -129,6 +129,13 @@ struct TransactionSummary {
     var spendRatio: Double { primary.spendRatio }
 }
 
+struct PayerSpendingItem: Identifiable {
+    let id: Int
+    let name: String
+    let total: Double
+    let perCurrency: [CurrencyTotal]
+}
+
 /// MARK: - TransactionViewModel Overview (交易视图模型概述)
 ///
 /// TransactionViewModel manages transaction data fetching, caching, and client-side computation.
@@ -780,8 +787,8 @@ final class TransactionViewModel {
     ///   .income 或 .expense（确定是添加还是减去）
     /// - date: When the transaction occurred
     ///   交易发生的时间
-    /// - categoryId: Optional category for the transaction
-    ///   交易的可选类别
+    /// - category: Optional plain-text category label for the transaction
+    ///   交易的可选分類文字標籤
     /// - notes: Optional additional details
     ///   可选的附加详细信息
     /// - accountIds: Which shared accounts this belongs to
@@ -797,7 +804,7 @@ final class TransactionViewModel {
         currency: String? = nil,
         type: TransactionType,
         date: Date,
-        categoryId: String?,
+        category: String?,
         notes: String?,
         accountIds: [String]
     ) async throws -> Transaction {
@@ -814,7 +821,7 @@ final class TransactionViewModel {
             transactionType: type,
             transactionDate: iso.string(from: date),
             accountIds:      accountIds,
-            categoryId:      categoryId,
+            category:        normalizedCategory(category),
             notes:           notes?.isEmpty == true ? nil : notes
         )
 
@@ -822,11 +829,7 @@ final class TransactionViewModel {
         /// 发送到 API 并获取返回的创建交易（带有服务器 ID、时间戳）
         let tx = try await txService.createTransaction(req)
 
-        /// Optimistic update: add to local list immediately
-        /// Insert at index 0 so newest appears first
-        /// 乐观更新: 立即添加到本地列表
-        /// 在索引 0 处插入，最新的首先出现
-        transactions.insert(tx, at: 0)
+        insertCreatedTransaction(tx)
 
         return tx
     }
@@ -853,7 +856,7 @@ final class TransactionViewModel {
         currency: String? = nil,
         type: TransactionType,
         date: Date,
-        categoryId: String?,
+        category: String?,
         notes: String?,
         accountIds: [String]
     ) async throws -> Transaction {
@@ -865,7 +868,7 @@ final class TransactionViewModel {
             transactionType: type,
             transactionDate: iso.string(from: date),
             accountIds:      accountIds,
-            categoryId:      categoryId,
+            category:        normalizedCategory(category),
             notes:           notes?.isEmpty == true ? nil : notes
         )
 
@@ -873,15 +876,58 @@ final class TransactionViewModel {
         /// 调用更新 API 端点
         let tx = try await txService.updateTransaction(id: id, req: req)
 
-        /// Optimistic update: replace in local list
-        /// 乐观更新: 在本地列表中替换
-        /// firstIndex(where:) finds the position of the matching transaction
-        /// firstIndex(where:) 找到匹配的交易的位置
-        if let idx = transactions.firstIndex(where: { $0.id == id }) {
-            transactions[idx] = tx
-        }
+        replaceTransactionInCaches(tx)
 
         return tx
+    }
+
+    private func insertCreatedTransaction(_ tx: Transaction) {
+        if tx.accounts.isEmpty {
+            personalTransactions.insert(tx, at: 0)
+        } else {
+            transactions.insert(tx, at: 0)
+            for account in tx.accounts {
+                accountStates[account.id, default: AccountState()].transactions.insert(tx, at: 0)
+            }
+        }
+    }
+
+    private func normalizedCategory(_ category: String?) -> String? {
+        guard let category else { return nil }
+        return category.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func replaceTransactionInCaches(_ tx: Transaction) {
+        if tx.accounts.isEmpty {
+            transactions.removeAll { $0.id == tx.id }
+            if replaceTransaction(tx, in: &personalTransactions) == false {
+                personalTransactions.insert(tx, at: 0)
+            }
+        } else {
+            personalTransactions.removeAll { $0.id == tx.id }
+            if replaceTransaction(tx, in: &transactions) == false {
+                transactions.insert(tx, at: 0)
+            }
+        }
+
+        let newAccountIds = Set(tx.accounts.map(\.id))
+        for (accountId, var state) in accountStates {
+            if newAccountIds.contains(accountId) {
+                if replaceTransaction(tx, in: &state.transactions) == false {
+                    state.transactions.insert(tx, at: 0)
+                }
+            } else {
+                state.transactions.removeAll { $0.id == tx.id }
+            }
+            accountStates[accountId] = state
+        }
+    }
+
+    @discardableResult
+    private func replaceTransaction(_ tx: Transaction, in list: inout [Transaction]) -> Bool {
+        guard let idx = list.firstIndex(where: { $0.id == tx.id }) else { return false }
+        list[idx] = tx
+        return true
     }
 
     /// Delete a transaction by ID
@@ -976,6 +1022,15 @@ final class TransactionViewModel {
         return TransactionSummary(currencies: amounts)
     }
 
+    func transaction(matching id: String) -> Transaction? {
+        if let tx = transactions.first(where: { $0.id == id }) { return tx }
+        if let tx = personalTransactions.first(where: { $0.id == id }) { return tx }
+        for state in accountStates.values {
+            if let tx = state.transactions.first(where: { $0.id == id }) { return tx }
+        }
+        return nil
+    }
+
     /// Breakdown expenses by category
     /// 按类别分解支出
     ///
@@ -999,12 +1054,10 @@ final class TransactionViewModel {
         /// 防护: 如果没有支出，返回空分解
         guard !expenses.isEmpty else { return [] }
 
-        /// Build lookup: category name → category object
-        /// Important: tx.category is the read-only name returned by GET
-        ///            tx.categoryId is write-only (never in GET response)
-        /// 构建查找: 类别名称 → 类别对象
-        /// 重要: tx.category 是 GET 返回的只读名称
-        ///      tx.categoryId 是只写的（从不在 GET 响应中）
+        /// Build lookup: category name → category object for icons and preset metadata.
+        /// Transactions store the category label directly.
+        /// 构建查找: 类别名称 → 类别对象，用於 icon 與預設資料。
+        /// 交易本身直接儲存分類文字。
         let catMapByName = Dictionary(uniqueKeysWithValues: categories.map { ($0.name, $0) })
 
         /// Group expenses: category name → (currency → amount)
@@ -1071,6 +1124,40 @@ final class TransactionViewModel {
         /// 按总支出降序排序（最昂贵的优先）
         items.sort { $0.total > $1.total }
         return items
+    }
+
+    func payerSpendingBreakdown(forAccountId accountId: String?) -> [PayerSpendingItem] {
+        let expenses = slice(for: accountId).filter { $0.transactionType == .expense }
+        guard !expenses.isEmpty else { return [] }
+
+        var namesById: [Int: String] = [:]
+        var totalsByPayer: [Int: [String: Double]] = [:]
+
+        for tx in expenses {
+            let payerId = tx.payer.id
+            let currency = tx.currency ?? "TWD"
+            let amount = Double(tx.amount) ?? 0
+
+            namesById[payerId] = tx.payer.username
+            totalsByPayer[payerId, default: [:]][currency, default: 0] += amount
+        }
+
+        return totalsByPayer.compactMap { payerId, currencyMap in
+            let perCurrency = currencyMap
+                .map { CurrencyTotal(currency: $0.key, amount: $0.value) }
+                .sorted { $0.amount > $1.amount }
+            let total = perCurrency.reduce(0) { $0 + $1.amount }
+
+            guard total > 0 else { return nil }
+
+            return PayerSpendingItem(
+                id: payerId,
+                name: namesById[payerId] ?? "Unknown",
+                total: total,
+                perCurrency: perCurrency
+            )
+        }
+        .sorted { $0.total > $1.total }
     }
 
     /// MARK: - Filter Helper (过滤帮助器)
@@ -1160,7 +1247,7 @@ final class TransactionViewModel {
                 transactionType: draft.transactionType,
                 transactionDate: iso.string(from: draft.transactionDate),
                 accountIds:      draft.accountIds,
-                categoryId:      draft.categoryId,
+                category:        normalizedCategory(draft.categoryName),
                 notes:           draft.notes?.isEmpty == true ? nil : draft.notes
             )
 
@@ -1237,7 +1324,7 @@ final class TransactionViewModel {
                 transactionType: draft.transactionType,
                 transactionDate: iso.string(from: draft.transactionDate),
                 accountIds:      draft.accountIds,
-                categoryId:      draft.categoryId,
+                category:        normalizedCategory(draft.categoryName),
                 notes:           draft.notes?.isEmpty == true ? nil : draft.notes
             )
 

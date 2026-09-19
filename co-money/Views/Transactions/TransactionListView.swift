@@ -43,8 +43,9 @@ struct TransactionListView: View {
                     // Reusable component: custom month picker with previous/next buttons
                     MonthNavigationBar(
                         currentMonth: vm.currentMonth,
-                        hasPrevious:  vm.hasPreviousMonth && !vm.isChangingMonth,
-                        hasNext:      vm.hasNextMonth && !vm.isChangingMonth,
+                        hasPrevious:  vm.hasPreviousMonth,
+                        hasNext:      vm.hasNextMonth,
+                        isLoading:    vm.isChangingMonth,
                         onPrevious:   { Task { await vm.loadPreviousMonth() } },
                         onNext:       { Task { await vm.loadNextMonth() } }
                     )
@@ -189,6 +190,7 @@ struct MonthNavigationBar: View {
     let currentMonth: String?
     let hasPrevious:  Bool
     let hasNext:      Bool
+    let isLoading:    Bool
 
     // MARK: - Closures (回調函數)
     // 點擊前一月/下一月時的回調
@@ -235,6 +237,7 @@ struct MonthNavigationBar: View {
                     .font(.body.bold())
                     // 按鈕狀態：可用時為強調色，禁用時為灰色
                     .foregroundStyle(hasPrevious ? Color.accentColor : Color(.systemGray3))
+                    .opacity(isLoading ? 0.35 : 1)
                     .frame(width: 36, height: 36)
                     .background(Color(.systemGray6))
                     .clipShape(Circle())
@@ -244,8 +247,16 @@ struct MonthNavigationBar: View {
             Spacer()
 
             // MARK: - 月份顯示
-            Text(displayMonth)
-                .font(.headline)
+            HStack(spacing: 6) {
+                Text(displayMonth)
+                    .font(.headline)
+
+                if isLoading {
+                    ProgressView()
+                        .controlSize(.mini)
+                }
+            }
+            .frame(minWidth: 132)
 
             Spacer()
 
@@ -259,6 +270,7 @@ struct MonthNavigationBar: View {
                     .font(.body.bold())
                     // 按鈕狀態：可用時為強調色，禁用時為灰色
                     .foregroundStyle(hasNext ? Color.accentColor : Color(.systemGray3))
+                    .opacity(isLoading ? 0.35 : 1)
                     .frame(width: 36, height: 36)
                     .background(Color(.systemGray6))
                     .clipShape(Circle())

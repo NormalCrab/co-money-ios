@@ -43,10 +43,11 @@ struct AddTransactionView: View {
     @State private var currency        = ""
     @State private var transactionType = TransactionType.expense
     @State private var date            = Date()
-    @State private var selectedCatId:  String? = nil
+    @State private var categoryName    = ""
     @State private var notes           = ""
     @State private var selectedAccIds: [String] = []
     @State private var isLoading       = false
+    @State private var didPrefill      = false
     @State private var errorMessage:   String?
 
     // Common currencies for quick selection
@@ -67,8 +68,17 @@ struct AddTransactionView: View {
     /// 獲取分類列表：優先使用 profileVM 的分類，若無則使用 txVM 的備用分類
     /// This provides a flexible fallback mechanism for data sources
     private var availableCategories: [Category] {
-        let cats = profileVM.categories.isEmpty ? vm.categories : profileVM.categories
-        return cats
+        var seen = Set<String>()
+        var merged: [Category] = []
+
+        for cat in profileVM.categories + vm.categories {
+            let key = cat.id.isEmpty ? cat.name.lowercased() : cat.id
+            guard !seen.contains(key) else { continue }
+            seen.insert(key)
+            merged.append(cat)
+        }
+
+        return merged.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
     var body: some View {
@@ -118,28 +128,19 @@ struct AddTransactionView: View {
                 }
 
                 // MARK: - 分類 Section (Category)
-                // Category — always show; pulls from profileVM then txVM as fallback
-                // 分類區塊：始終顯示；優先從 profileVM 獲取，無則使用 txVM 備用
+                // Category — presets are used as quick picks, while free text is allowed.
+                // 分類區塊：預設分類作為快速選取，也允許自由輸入。
                 Section("分類 Category") {
-                    if availableCategories.isEmpty {
-                        // 無分類時顯示提示信息
-                        Text("請先在設定中新增分類")
-                            .foregroundStyle(.secondary)
-                            .font(.subheadline)
-                    } else {
-                        // Picker 綁定到 @State selectedCatId
-                        // selectedCatId 是 String? (Optional)：可為 nil 表示「無分類」
-                        Picker("選擇分類", selection: $selectedCatId) {
-                            // 第一個選項：無 (nil value)
-                            Text("無 None").tag(String?.none)
+                    TextField("分類名稱 Category", text: $categoryName)
 
-                            // 從分類列表生成選項
-                            // ForEach 會遍歷每個 Category，使用 tag() 設置對應的值
+                    if !availableCategories.isEmpty {
+                        Picker("快速選取", selection: $categoryName) {
+                            Text("無 None").tag("")
                             ForEach(availableCategories) { cat in
                                 HStack {
                                     if let icon = cat.icon, !icon.isEmpty { Text(icon) }
                                     Text(cat.name)
-                                }.tag(Optional(cat.id))
+                                }.tag(cat.name)
                             }
                         }
                     }
@@ -225,11 +226,24 @@ struct AddTransactionView: View {
             // onAppear: 視圖出現時的生命週期回調
             // View lifecycle hook: called when view appears on screen
             // 用於初始化狀態或執行載入邏輯
-            .onAppear { prefill() }
+            .onAppear { prefillIfNeeded() }
+            .task { await loadCategoriesIfNeeded() }
         }
     }
 
     // MARK: - Pre-fill Method (預填數據)
+
+    private func prefillIfNeeded() {
+        guard !didPrefill else { return }
+        prefill()
+        didPrefill = true
+    }
+
+    private func loadCategoriesIfNeeded() async {
+        guard availableCategories.isEmpty else { return }
+        await profileVM.loadProfile()
+        syncCategorySelectionFromEditingTransaction()
+    }
 
     /// 根據 editingTransaction 預填表單，或使用預設值
     /// Populates form fields when editing an existing transaction or on initial load
@@ -248,12 +262,7 @@ struct AddTransactionView: View {
             notes           = tx.notes ?? ""
             selectedAccIds  = tx.accounts.map { $0.id }  // 提取帳戶 ID 陣列
 
-            // 匹配分類：使用名稱匹配（因為 categoryId 是 write-only）
-            // categoryId is write-only in API: backend doesn't return it
-            // So we match by category name from available categories list
-            if let catName = tx.category {
-                selectedCatId = availableCategories.first { $0.name == catName }?.id
-            }
+            syncCategorySelectionFromEditingTransaction()
         } else {
             // 新增模式：使用預設幣種和帳戶
             currency       = profileVM.profile?.defaultCurrency ?? commonCurrencies[0]
@@ -265,6 +274,11 @@ struct AddTransactionView: View {
                 selectedAccIds = profileVM.profile?.defaultSharedAccounts ?? []
             }
         }
+    }
+
+    private func syncCategorySelectionFromEditingTransaction() {
+        guard let tx = editingTransaction else { return }
+        categoryName = tx.category ?? ""
     }
 
     // MARK: - Save Method (保存邏輯)
@@ -292,7 +306,7 @@ struct AddTransactionView: View {
                     currency:    cur.isEmpty ? nil : cur,
                     type:        transactionType,
                     date:        date,
-                    categoryId:  selectedCatId,
+                    category:    categoryName,
                     notes:       notes,
                     accountIds:  selectedAccIds
                 )
@@ -304,7 +318,7 @@ struct AddTransactionView: View {
                     currency:    cur.isEmpty ? nil : cur,
                     type:        transactionType,
                     date:        date,
-                    categoryId:  selectedCatId,
+                    category:    categoryName,
                     notes:       notes,
                     accountIds:  selectedAccIds
                 )
