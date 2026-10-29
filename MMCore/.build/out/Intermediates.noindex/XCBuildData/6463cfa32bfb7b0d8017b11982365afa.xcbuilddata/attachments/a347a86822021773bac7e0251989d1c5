@@ -1,0 +1,4 @@
+module MMCore {
+header "MMCore-Swift.h"
+export *
+}

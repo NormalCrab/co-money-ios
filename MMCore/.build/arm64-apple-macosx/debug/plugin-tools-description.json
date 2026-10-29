@@ -1,0 +1,832 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.xctest/Contents/MacOS/MMCorePackageTests",
+      "packagePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore",
+      "productName" : "MMCorePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.MMCore-arm64-apple-macosx28.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/sources",
+      "importPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MMCore",
+      "moduleOutputPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCore.swiftmodule",
+      "objects" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/include/MMCore-Swift.h",
+        "-swift-version",
+        "6",
+        "-I",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-L",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-plugin-path",
+        "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mmcore"
+      ],
+      "outputFileMapPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift"
+      ],
+      "tempsPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MMCorePackageTests-arm64-apple-macosx28.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/sources",
+      "importPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCoreTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MMCorePackageTests",
+      "moduleOutputPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCorePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/include/MMCorePackageTests-Swift.h",
+        "-I",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-L",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-plugin-path",
+        "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mmcore"
+      ],
+      "outputFileMapPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCorePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MMCoreTests-arm64-apple-macosx28.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/sources",
+      "importPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/APIClientTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/AuthSessionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/LiveTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/OutboxTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ReceiptTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/Support.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ValuesTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MMCoreTests",
+      "moduleOutputPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCoreTests.swiftmodule",
+      "objects" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.swift.o",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-I",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-L",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-plugin-path",
+        "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mmcore"
+      ],
+      "outputFileMapPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules/MMCoreTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/APIClientTests.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/AuthSessionTests.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/LiveTests.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/OutboxTests.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ReceiptTests.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/Support.swift",
+        "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ValuesTests.swift"
+      ],
+      "tempsPath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "MMCore" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "MMCore",
+      "-package-name",
+      "mmcore",
+      "-c",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift",
+      "-I",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/include/MMCore-Swift.h",
+      "-swift-version",
+      "6",
+      "-I",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-L",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-plugin-path",
+      "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mmcore",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ],
+    "MMCorePackageTests" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "MMCorePackageTests",
+      "-package-name",
+      "mmcore",
+      "-c",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/include/MMCorePackageTests-Swift.h",
+      "-I",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-L",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-plugin-path",
+      "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mmcore",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ],
+    "MMCoreTests" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "MMCoreTests",
+      "-package-name",
+      "mmcore",
+      "-c",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/APIClientTests.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/AuthSessionTests.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/LiveTests.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/OutboxTests.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ReceiptTests.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/Support.swift",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ValuesTests.swift",
+      "-I",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-I",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-L",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-plugin-path",
+      "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mmcore",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "MMCore" : [
+
+    ],
+    "MMCorePackageTests" : [
+      "MMCoreTests",
+      "MMCore"
+    ],
+    "MMCoreTests" : [
+      "MMCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/sources"
+    },
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/sources"
+    },
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/APIClientTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/AuthSessionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/LiveTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/OutboxTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ReceiptTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/Support.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ValuesTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/sources"
+    },
+    "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}

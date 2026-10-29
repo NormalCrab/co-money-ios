@@ -1,0 +1,54 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/master.swiftdeps"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/APIClientTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/APIClientTests.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/AuthSessionTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/AuthSessionTests.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/LiveTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/LiveTests.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/OutboxTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/OutboxTests.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ReceiptTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ReceiptTests.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/Support.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/Support.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Tests/MMCoreTests/ValuesTests.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCoreTests.build/ValuesTests.dia"
+  }
+}

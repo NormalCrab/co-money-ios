@@ -1,0 +1,119 @@
+{
+  "" : {
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/MMCore-primary.dia",
+    "emit-module-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/MMCore-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/MMCore-primary-emit-module.dia",
+    "pch" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/MMCore-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/MMCore-primary.swiftdeps"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/APIClient~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/AuthSession~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Calendar~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/HTTP~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/InvoiceQR~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Ledgers.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Ledgers~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Models~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Outbox~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/ReceiptText~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Settings.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Settings~partial.swiftmodule"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift" : {
+    "const-values" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.swiftconstvalues",
+    "dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.d",
+    "diagnostics" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.dia",
+    "index-unit-output-path" : "/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.o",
+    "llvm-bc" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.bc",
+    "object" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.o",
+    "swift-dependencies" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values.swiftdeps",
+    "swiftmodule" : "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/out/Intermediates.noindex/MMCore.build/Debug/MMCore-t.build/Objects-normal/arm64/Values~partial.swiftmodule"
+  }
+}

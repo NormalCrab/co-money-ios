@@ -1,0 +1,68 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/master.swiftdeps"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/APIClient.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/APIClient.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/AuthSession.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/AuthSession.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Calendar.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Calendar.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/HTTP.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/HTTP.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/InvoiceQR.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/InvoiceQR.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Models.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Models.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Outbox.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Outbox.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/ReceiptText.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/ReceiptText.dia"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/Sources/MMCore/Values.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCore.build/Values.dia"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/master.swiftdeps"
+  },
+  "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.derived/runner.swift": {
+    "dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.d",
+    "object": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/alexanderkang/Project/co-money-ios/MMCore/.build/arm64-apple-macosx/debug/MMCorePackageTests.build/runner.dia"
+  }
+}

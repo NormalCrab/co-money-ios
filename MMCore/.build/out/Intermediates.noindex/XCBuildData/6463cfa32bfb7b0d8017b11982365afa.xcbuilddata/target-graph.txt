@@ -1,0 +1,11 @@
+Target dependency graph (4 targets)
+Target 'AllIncludingTests' in project 'Aggregate'
+➜ Explicit dependency on target 'MMCoreTests-product' in project 'MMCore'
+➜ Dependency on target 'MMCoreTests-product' in project 'MMCore' via transitive dependency through 'MMCoreTests-test-runner'
+➜ Explicit dependency on target 'MMCore-product' in project 'MMCore'
+➜ Explicit dependency on target 'MMCore' in project 'MMCore'
+Target 'MMCore-product' in project 'MMCore'
+➜ Explicit dependency on target 'MMCore' in project 'MMCore'
+Target 'MMCoreTests-product' in project 'MMCore'
+➜ Explicit dependency on target 'MMCore' in project 'MMCore'
+Target 'MMCore' in project 'MMCore' (no dependencies)
