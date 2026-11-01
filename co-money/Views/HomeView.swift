@@ -12,6 +12,8 @@ struct HomeView: View {
 
     @State private var entry: Entry?
     @State private var showInbox = false
+    @State private var editing: MMCore.Transaction?
+    @State private var offlineNotice = false
 
     var body: some View {
         NavigationStack {
@@ -53,6 +55,14 @@ struct HomeView: View {
                 case .receipt: ReceiptEntryView()
                 case .text: TextEntryView()
                 }
+            }
+            .sheet(item: $editing) { transaction in
+                QuickEntryView(editing: transaction)
+            }
+            .alert("需要連線", isPresented: $offlineNotice) {
+                Button("好") {}
+            } message: {
+                Text("修改或刪除已上傳的交易需要連線。")
             }
         }
     }
@@ -140,7 +150,14 @@ struct HomeView: View {
                 Divider()
             }
             ForEach(model.transactions.prefix(5)) { transaction in
-                TransactionRow(transaction: transaction, showDay: true)
+                Button {
+                    // 修改、刪除需要連線（§4.1）。
+                    if model.isOffline { offlineNotice = true } else { editing = transaction }
+                } label: {
+                    TransactionRow(transaction: transaction, showDay: true)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
                 Divider()
             }
         }

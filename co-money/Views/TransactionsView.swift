@@ -59,7 +59,7 @@ struct TransactionsView: View {
             .alert("需要連線", isPresented: $offlineNotice) {
                 Button("好") {}
             } message: {
-                Text("修改已上傳的交易需要連線。")
+                Text("修改或刪除已上傳的交易需要連線。")
             }
             .alert("刪除失敗", isPresented: .constant(deleteError != nil)) {
                 Button("好") { deleteError = nil }

@@ -3,7 +3,8 @@ import SwiftUI
 
 /// 記一筆（設計畫布「QuickEntry」）。存進待上傳後立刻關掉，不等網路（§0 原則 2）。
 ///
-/// 傳入 `editing` 時是修改已上傳的交易（N9）：同一個表單，但需要連線，存好之後才關掉。
+/// 傳入 `editing` 時是修改已上傳的交易（N9）：同一個表單，但需要連線，存好之後才關掉；
+/// 表單最下面可以刪除這筆交易。
 struct QuickEntryView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -11,6 +12,7 @@ struct QuickEntryView: View {
     var editing: MMCore.Transaction?
     @State private var isSaving = false
     @State private var saveError: String?
+    @State private var confirmDelete = false
 
     @State private var ledgerId: UUID?
     @State private var type: TransactionType = .expense
@@ -118,8 +120,22 @@ struct QuickEntryView: View {
                         Text(saveError).font(.footnote).foregroundStyle(Palette.warning)
                     }
                 }
+
+                if editing != nil {
+                    Section {
+                        // 刪除需要連線（§4.1），和修改一樣。
+                        Button("刪除這筆交易", role: .destructive) { confirmDelete = true }
+                            .frame(maxWidth: .infinity)
+                            .disabled(isSaving || model.isOffline)
+                    }
+                }
             }
             .navigationTitle(editing == nil ? "記一筆" : "修改交易")
+            .confirmationDialog("刪除這筆交易？", isPresented: $confirmDelete, titleVisibility: .visible) {
+                Button("刪除", role: .destructive, action: deleteTransaction)
+            } message: {
+                Text("刪除後無法復原。")
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
@@ -221,5 +237,23 @@ struct QuickEntryView: View {
         didSave = true
         dismiss()
         Task { await model.add(input) }
+    }
+
+    private func deleteTransaction() {
+        guard let editing else { return }
+        isSaving = true
+        saveError = nil
+        Task {
+            do {
+                try await model.delete(editing)
+                dismiss()
+            } catch let error as APIError {
+                saveError = error.message
+                isSaving = false
+            } catch {
+                saveError = error.localizedDescription
+                isSaving = false
+            }
+        }
     }
 }
