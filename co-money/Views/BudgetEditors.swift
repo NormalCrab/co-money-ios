@@ -23,19 +23,25 @@ private func perform(_ work: () async throws -> Void) async -> String? {
 }
 
 /// 新增 / 修改一次性預算（tag）。週期預算的單一期也從這裡改（不影響規則，v2 §5.2）。
+///
+/// 一次性預算用期限決定顯示（§12.2）：原本的「封存」改成設結束日，「取消封存」改成清掉結束日。
 struct BudgetEditor: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
     var editing: Tag?
-    var onSaved: () async -> Void = {}
 
     @State private var name = ""
     @State private var budgetText = ""
-    @State private var archived = false
+    @State private var hasStart = false
+    @State private var startDate = Date()
+    @State private var hasEnd = false
+    @State private var endDate = Date()
     @State private var isSaving = false
     @State private var error: String?
     @State private var confirmDelete = false
+
+    private var isPeriodic: Bool { editing?.isPeriodic == true }
 
     var body: some View {
         NavigationStack {
@@ -44,16 +50,21 @@ struct BudgetEditor: View {
                     TextField("名稱", text: $name)
                     TextField("預算金額（可以不填）", text: $budgetText).keyboardType(.decimalPad)
                 } footer: {
-                    if editing?.isPeriodic == true {
+                    if isPeriodic {
                         Text("這是週期預算的其中一期，修改它不會影響規則和其他期。")
                     }
                 }
-                if let editing {
-                    Section {
-                        Toggle("封存", isOn: $archived)
-                    } footer: {
-                        Text("封存後不會出現在預設的清單；已經掛上的交易不受影響。")
+
+                if isPeriodic, let editing {
+                    Section("期限") {
+                        LabeledContent("期限", value: DateText.period(start: editing.periodStart,
+                                                                     end: editing.periodEnd) ?? "—")
                     }
+                } else {
+                    periodSection
+                }
+
+                if let editing {
                     Section {
                         Button("刪除", role: .destructive) { confirmDelete = true }
                     }
@@ -72,18 +83,60 @@ struct BudgetEditor: View {
                     Button("儲存") { Task { await save() } }.bold().disabled(!canSave)
                 }
             }
-            .onAppear {
-                guard let editing else { return }
-                name = editing.name
-                budgetText = editing.budgetAmount?.apiString ?? ""
-                archived = editing.isArchived ?? false
-            }
+            .onAppear(perform: load)
         }
+    }
+
+    private var periodSection: some View {
+        Section {
+            Toggle("設定開始日", isOn: $hasStart)
+            if hasStart {
+                DatePicker("開始日", selection: $startDate, displayedComponents: .date)
+            }
+            Toggle("設定結束日", isOn: $hasEnd)
+            if hasEnd {
+                DatePicker("結束日", selection: $endDate, in: (hasStart ? startDate : .distantPast)...,
+                           displayedComponents: .date)
+            }
+        } header: {
+            Text("期限")
+        } footer: {
+            Text("沒有結束日表示一直進行中；結束日過了就算結束（取代原本的「封存」），已經掛上的交易不受影響。旅行可以先設好回程日。")
+        }
+    }
+
+    private func load() {
+        let today = model.today.date(in: model.timeZone)
+        guard let editing else {
+            startDate = today
+            endDate = today
+            return
+        }
+        name = editing.name
+        budgetText = editing.budgetAmount?.apiString ?? ""
+        hasStart = editing.periodStart != nil
+        startDate = editing.periodStart?.date(in: model.timeZone) ?? today
+        hasEnd = editing.periodEnd != nil
+        // 打開結束日時預設今天，等於原本的「封存」（§12.2）。
+        endDate = editing.periodEnd?.date(in: model.timeZone) ?? today
+    }
+
+    /// 一次性 tag 的期限；週期 tag 是 nil（期限由規則決定，送了會被拒絕）。
+    private var period: TagWrite.Period? {
+        guard !isPeriodic else { return nil }
+        let tz = model.timeZone
+        return .init(start: hasStart ? LocalDate(startDate, in: tz) : nil,
+                     end: hasEnd ? LocalDate(endDate, in: tz) : nil)
+    }
+
+    private var periodIsValid: Bool {
+        guard let start = period?.start, let end = period?.end else { return true }
+        return start <= end
     }
 
     private var canSave: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty && parseBudget(budgetText).isValid
-            && !isSaving && !model.isOffline
+            && periodIsValid && !isSaving && !model.isOffline
     }
 
     private func save() async {
@@ -94,9 +147,10 @@ struct BudgetEditor: View {
             let trimmed = name.trimmingCharacters(in: .whitespaces)
             if let editing {
                 _ = try await model.api.updateTag(
-                    editing.id, with: TagWrite(name: trimmed, budgetAmount: budget, isArchived: archived))
+                    editing.id, with: TagWrite(name: trimmed, budgetAmount: budget, period: period))
             } else {
-                _ = try await model.api.createTag(TagWrite(ledgerId: ledger.id, name: trimmed, budgetAmount: budget))
+                _ = try await model.api.createTag(
+                    TagWrite(ledgerId: ledger.id, name: trimmed, budgetAmount: budget, period: period))
             }
         }
         await finish()
@@ -112,7 +166,6 @@ struct BudgetEditor: View {
         isSaving = false
         guard error == nil else { return }
         await model.refreshLedgerData()
-        await onSaved()
         dismiss()
     }
 }
@@ -136,26 +189,35 @@ struct FormStatus: View {
     }
 }
 
-/// 週期預算規則的清單（v2 §2.6）：依頻率每一期自動產生一個預算。
+/// 週期預算規則的清單（v2 §2.6）：依頻率每一期自動產生一個預算。分成進行中、已結束（§12.3）。
 struct TagRulesView: View {
     @Environment(AppModel.self) private var model
     @State private var rules: [TagRule] = []
     @State private var loaded = false
+    @State private var loadError: String?
     @State private var editing: TagRule?
     @State private var creating = false
 
+    private var ongoing: [TagRule] { rules.filter { $0.isOngoing(today: model.today) } }
+    private var ended: [TagRule] { rules.filter { !$0.isOngoing(today: model.today) } }
+
     var body: some View {
         List {
-            ForEach(rules) { rule in
-                Button { editing = rule } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(rule.name).foregroundStyle(.primary)
-                        Text(summary(rule)).font(.caption).foregroundStyle(.secondary)
-                    }
+            if let loadError {
+                Section {
+                    Text(loadError).font(.footnote).foregroundStyle(Palette.warning)
                 }
             }
-            if loaded && rules.isEmpty {
-                Text("還沒有週期預算").foregroundStyle(.secondary)
+            Section {
+                ForEach(ongoing) { row($0) }
+                if loaded && loadError == nil && rules.isEmpty {
+                    Text("還沒有週期預算").foregroundStyle(.secondary)
+                }
+            }
+            if !ended.isEmpty {
+                Section("已結束") {
+                    ForEach(ended) { row($0) }
+                }
             }
         }
         .navigationTitle("週期預算")
@@ -174,21 +236,40 @@ struct TagRulesView: View {
         }
     }
 
+    private func row(_ rule: TagRule) -> some View {
+        Button { editing = rule } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(rule.name).foregroundStyle(.primary)
+                Text(summary(rule)).font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private func summary(_ rule: TagRule) -> String {
+        let today = model.today
         var parts = [rule.frequency.label]
         parts.append(rule.budgetAmount.map { "預算 \($0.display)" } ?? "沒有預算金額")
-        if !rule.isActive { parts.append("已停用") }
+        if rule.startDate > today {
+            parts.append("\(DateText.shortDay(rule.startDate, today: today)) 開始")
+        }
+        if let end = rule.endDate {
+            let day = DateText.shortDay(end, today: today)
+            parts.append(rule.isOngoing(today: today) ? "到 \(day)" : "\(day) 結束")
+        }
         return parts.joined(separator: "・")
     }
 
     private func load() async {
         guard let ledger = model.selectedLedger else { return }
-        if let list = try? await model.api.tagRules(ledger: ledger.id) { rules = list }
+        loadError = await perform { rules = try await model.api.tagRules(ledger: ledger.id) }
         loaded = true
     }
 }
 
-/// 新增 / 修改週期預算規則。頻率建立後不能改；停用只是不再產生新的一期，已產生的保留。
+/// 新增 / 修改週期預算規則。頻率建立後不能改。
+///
+/// 期限（§12.3）：停用 = 設結束日，之後不再產生新的一期，已產生的保留；重新啟用 = 清掉結束日或改晚。
+/// 開始日只能往前改（後端會擋往後改）。
 struct TagRuleEditor: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -199,7 +280,9 @@ struct TagRuleEditor: View {
     @State private var name = ""
     @State private var budgetText = ""
     @State private var frequency: Frequency = .monthly
-    @State private var isActive = true
+    @State private var startDate = Date()
+    @State private var hasEnd = false
+    @State private var endDate = Date()
     @State private var isSaving = false
     @State private var error: String?
     @State private var confirmDelete = false
@@ -220,12 +303,22 @@ struct TagRuleEditor: View {
                 } footer: {
                     Text("修改只影響之後產生的每一期，已經產生的不會變。")
                 }
-                if let editing {
-                    Section {
-                        Toggle("啟用", isOn: $isActive)
-                    } footer: {
-                        Text("停用後不再產生新的一期，已經產生的預算都保留。")
+
+                Section {
+                    DatePicker("開始日", selection: $startDate, in: startRange, displayedComponents: .date)
+                    Toggle("設定結束日", isOn: $hasEnd)
+                    if hasEnd {
+                        DatePicker("結束日", selection: $endDate, in: startDate..., displayedComponents: .date)
                     }
+                } header: {
+                    Text("期限")
+                } footer: {
+                    Text(editing == nil
+                         ? "開始日落在一期的中間時，那一整期都算。結束日可以先設在未來，例如只到年底。"
+                         : "停用就是設結束日：之後不再產生新的一期，已經產生的都保留。要重新啟用就關掉結束日或改晚。開始日只能往前改。")
+                }
+
+                if let editing {
                     Section {
                         Button("刪除規則", role: .destructive) { confirmDelete = true }
                     }
@@ -244,19 +337,36 @@ struct TagRuleEditor: View {
                     Button("儲存") { Task { await save() } }.bold().disabled(!canSave)
                 }
             }
-            .onAppear {
-                guard let editing else { return }
-                name = editing.name
-                budgetText = editing.budgetAmount?.apiString ?? ""
-                frequency = editing.frequency
-                isActive = editing.isActive
-            }
+            .onAppear(perform: load)
         }
     }
 
+    /// 修改時開始日只能往前（後端會擋往後改）。
+    private var startRange: ClosedRange<Date> {
+        Date.distantPast...(editing?.startDate.date(in: model.timeZone) ?? .distantFuture)
+    }
+
+    private func load() {
+        let today = model.today.date(in: model.timeZone)
+        guard let editing else {
+            startDate = today
+            endDate = today
+            return
+        }
+        name = editing.name
+        budgetText = editing.budgetAmount?.apiString ?? ""
+        frequency = editing.frequency
+        startDate = editing.startDate.date(in: model.timeZone)
+        hasEnd = editing.endDate != nil
+        endDate = editing.endDate?.date(in: model.timeZone) ?? max(today, startDate)
+    }
+
+    private var start: LocalDate { LocalDate(startDate, in: model.timeZone) }
+    private var end: LocalDate? { hasEnd ? LocalDate(endDate, in: model.timeZone) : nil }
+
     private var canSave: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty && parseBudget(budgetText).isValid
-            && !isSaving && !model.isOffline
+            && (end.map { $0 >= start } ?? true) && !isSaving && !model.isOffline
     }
 
     private func save() async {
@@ -267,11 +377,12 @@ struct TagRuleEditor: View {
             let trimmed = name.trimmingCharacters(in: .whitespaces)
             if let editing {
                 _ = try await model.api.updateTagRule(
-                    editing.id, with: TagRuleWrite(name: trimmed, budgetAmount: budget,
-                                                   frequency: frequency, isActive: isActive))
+                    editing.id, with: TagRuleWrite(name: trimmed, budgetAmount: budget, frequency: frequency,
+                                                   startDate: start, endDate: end))
             } else {
                 _ = try await model.api.createTagRule(
-                    TagRuleWrite(ledgerId: ledger.id, name: trimmed, budgetAmount: budget, frequency: frequency))
+                    TagRuleWrite(ledgerId: ledger.id, name: trimmed, budgetAmount: budget, frequency: frequency,
+                                 startDate: start, endDate: end))
             }
         }
         await finish()

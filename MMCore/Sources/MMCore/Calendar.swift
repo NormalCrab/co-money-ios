@@ -71,6 +71,22 @@ public enum DateText {
         }
     }
 
+    /// tag 的期限：「10/1 ~ 10/31」，跨年才寫年份。一次性 tag 可以只有一端（§12.2）：「~ 10/31」「10/1 ~」。
+    /// 兩端都沒有時回傳 nil。
+    public static func period(start: LocalDate?, end: LocalDate?) -> String? {
+        var withYear = false
+        if let start, let end, start.year != end.year { withYear = true }
+        func text(_ day: LocalDate) -> String {
+            withYear ? "\(day.year)/\(day.month)/\(day.day)" : "\(day.month)/\(day.day)"
+        }
+        switch (start, end) {
+        case let (start?, end?): return "\(text(start)) ~ \(text(end))"
+        case let (start?, nil): return "\(text(start)) ~"
+        case let (nil, end?): return "~ \(text(end))"
+        case (nil, nil): return nil
+        }
+    }
+
     /// 「10:42」
     public static func time(_ date: Date, in timeZone: TimeZone) -> String {
         let parts = Calendar.gregorian(timeZone).dateComponents([.hour, .minute], from: date)

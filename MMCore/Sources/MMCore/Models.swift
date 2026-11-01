@@ -100,20 +100,27 @@ public struct LedgerLite: Codable, Hashable, Sendable, Identifiable {
 public struct TagLite: Codable, Hashable, Sendable, Identifiable {
     public var id: UUID
     public var name: String
-    public var isArchived: Bool?
     public var periodStart: LocalDate?
     public var periodEnd: LocalDate?
+    /// 週期 tag 是哪條規則產生的；一次性 tag 是 nil（§12.5）。
+    public var rule: UUID?
+    public var ruleName: String?
 }
 
 /// Tag（預算）。週期 tag 每一期是一個 Tag（v2-design §5）。
+///
+/// 期限（`periodStart` ~ `periodEnd`）決定顯示（§12）：沒有「封存」了，結束日過了就是已結束。
 public struct Tag: Codable, Hashable, Sendable, Identifiable {
     public var id: UUID
     public var name: String
     public var budgetAmount: Money?
-    public var isArchived: Bool?
     public var periodStart: LocalDate?
     public var periodEnd: LocalDate?
+    public var rule: UUID?
+    public var ruleName: String?
     public var isPeriodic: Bool
+    /// 結束日早於帳本時區的今天（後端算）。舊的快取沒有這個欄位。
+    public var isEnded: Bool?
     public var spent: Money
     public var remaining: Money?
 

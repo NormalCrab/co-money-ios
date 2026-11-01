@@ -1,14 +1,13 @@
 import MMCore
 import SwiftUI
 
-/// 預算（設計畫布「Budgets」）：選定月份的 tag。新增、修改、封存都在手機上做（N6、N7）。
+/// 預算（設計畫布「Budgets」）：期限和選定月份重疊的 tag（§12：看期限，不看封存，過去的月份也看得到）。
+/// 新增、修改、設結束日都在手機上做（N6、N7）。
 struct BudgetsView: View {
     @Environment(AppModel.self) private var model
     @State private var editing: Tag?
     @State private var creatingOnce = false
     @State private var creatingPeriodic = false
-    @State private var showArchived = false
-    @State private var archived: [Tag] = []
 
     var body: some View {
         NavigationStack {
@@ -27,26 +26,13 @@ struct BudgetsView: View {
                         Text("一筆交易可以屬於多個 tag，各 tag 的花費不能相加。")
                     }
 
-                    if showArchived {
-                        Section("已封存") {
-                            ForEach(archived.filter { model.overlapsMonth($0) }) { tag in
-                                Button { editing = tag } label: { BudgetRow(tag: tag) }
-                                    .buttonStyle(.plain)
-                                    .opacity(0.6)
-                            }
-                        }
-                    }
-
                     Section {
                         NavigationLink("週期預算") { TagRulesView() }
                     } footer: {
                         Text("週期預算會依頻率每一期自動產生一個預算，例如每月的伙食費。")
                     }
                 }
-                .refreshable {
-                    await model.refreshLedgerData()
-                    await loadArchived()
-                }
+                .refreshable { await model.refreshLedgerData() }
             }
             .navigationTitle("預算")
             .toolbar {
@@ -55,28 +41,21 @@ struct BudgetsView: View {
                     Menu {
                         Button("新增預算", systemImage: "plus") { creatingOnce = true }
                         Button("新增週期預算", systemImage: "arrow.triangle.2.circlepath") { creatingPeriodic = true }
-                        Toggle("顯示已封存", isOn: $showArchived)
                     } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .onChange(of: showArchived) { _, _ in Task { await loadArchived() } }
             .sheet(item: $editing) { tag in
-                BudgetEditor(editing: tag) { await loadArchived() }
+                BudgetEditor(editing: tag)
             }
             .sheet(isPresented: $creatingOnce) {
-                BudgetEditor { await loadArchived() }
+                BudgetEditor()
             }
             .sheet(isPresented: $creatingPeriodic) {
                 TagRuleEditor()
             }
         }
-    }
-
-    private func loadArchived() async {
-        guard showArchived, let ledger = model.selectedLedger else { return }
-        if let list = try? await model.api.archivedTags(ledger: ledger.id) { archived = list }
     }
 }
 
@@ -87,6 +66,12 @@ struct BudgetRow: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(tag.name).font(.headline)
+                if tag.isEnded == true {
+                    Text("已結束").font(.caption2)
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color(.tertiarySystemFill), in: Capsule())
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
                 Text(period).font(.caption).foregroundStyle(.secondary)
             }
@@ -109,11 +94,10 @@ struct BudgetRow: View {
         .padding(.vertical, 4)
     }
 
+    /// 「10/1 ~ 10/31」；一次性 tag：「一次性」「一次性・~ 11/27」。
     private var period: String {
-        guard let start = tag.periodStart, let end = tag.periodEnd else { return "一次性" }
-        if start.year == end.year {
-            return "\(start.month)/\(start.day) ~ \(end.month)/\(end.day)"
-        }
-        return "\(start.year)/\(start.month)/\(start.day) ~ \(end.year)/\(end.month)/\(end.day)"
+        let range = DateText.period(start: tag.periodStart, end: tag.periodEnd)
+        if tag.isPeriodic { return range ?? "" }
+        return range.map { "一次性・\($0)" } ?? "一次性"
     }
 }

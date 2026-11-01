@@ -97,4 +97,10 @@ extension HTTPRequest {
 extension HTTPRequest {
     /// `URL.path` 會去掉結尾的斜線，Django 的網址都有斜線，所以用 URLComponents 讀。
     var fullPath: String { URLComponents(url: url, resolvingAgainstBaseURL: false)!.path }
+
+    /// 查詢參數，例如 `["ledger": "…", "year": "2026"]`。
+    var query: [String: String] {
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        return Dictionary(items.map { ($0.name, $0.value ?? "") }, uniquingKeysWith: { _, last in last })
+    }
 }

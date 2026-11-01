@@ -20,13 +20,27 @@ public enum Frequency: String, Codable, CaseIterable, Sendable, Identifiable {
 }
 
 /// 週期 tag 的產生規則（v2 §2.6）：依 frequency 每一期產生一個 tag，各有預算。
+///
+/// 涵蓋的期數由 `startDate` ~ `endDate` 決定（§12.3）。停用 = 設結束日；重新啟用 = 清掉結束日或改晚。
 public struct TagRule: Codable, Hashable, Sendable, Identifiable {
     public var id: UUID
     public var ledger: LedgerLite
     public var name: String
     public var budgetAmount: Money?
     public var frequency: Frequency
-    public var isActive: Bool
+    /// 每一期從哪天開始：每週是 ISO 星期，每月、每年是幾號。
+    public var startDay: Int?
+    /// 每年的規則從幾月開始；其他頻率是 nil。
+    public var startMonth: Int?
+    public var startDate: LocalDate
+    /// nil 是一直持續。
+    public var endDate: LocalDate?
+
+    /// 還在進行中：沒有結束日，或結束日是今天或之後（`today` 用帳本時區）。
+    public func isOngoing(today: LocalDate) -> Bool {
+        guard let endDate else { return true }
+        return endDate >= today
+    }
 }
 
 /// 重複交易規則（v2 §2.7）。金額二選一：本幣 `amount`，或外幣 `originalAmount` + `originalCurrency`。
@@ -54,21 +68,33 @@ public struct RecurringRule: Codable, Hashable, Sendable, Identifiable {
 /// 新增 / 修改 tag（一次性 tag；週期 tag 由 `TagRule` 產生）。
 /// 預算金額清掉時要明確送 null，只是省略的話後端會保留舊的。
 public struct TagWrite: Encodable, Sendable {
+    /// 一次性 tag 的期限（§12.2）。兩端都可以是 nil：沒有起點、沒有終點（一直進行中）。
+    public struct Period: Sendable, Equatable {
+        public var start: LocalDate?
+        public var end: LocalDate?
+
+        public init(start: LocalDate?, end: LocalDate?) {
+            self.start = start
+            self.end = end
+        }
+    }
+
     /// 新增時要給；修改時不送（tag 不能換帳本）。
     public var ledgerId: UUID?
     public var name: String
     public var budgetAmount: Money?
-    public var isArchived: Bool
+    /// nil 就完全不送期限：週期 tag 的期限由規則決定，送了會被拒絕。
+    public var period: Period?
 
-    public init(ledgerId: UUID? = nil, name: String, budgetAmount: Money? = nil, isArchived: Bool = false) {
+    public init(ledgerId: UUID? = nil, name: String, budgetAmount: Money? = nil, period: Period? = nil) {
         self.ledgerId = ledgerId
         self.name = name
         self.budgetAmount = budgetAmount
-        self.isArchived = isArchived
+        self.period = period
     }
 
     enum CodingKeys: String, CodingKey {
-        case ledgerId, name, budgetAmount, isArchived
+        case ledgerId, name, budgetAmount, periodStart, periodEnd
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -76,7 +102,11 @@ public struct TagWrite: Encodable, Sendable {
         try container.encodeIfPresent(ledgerId, forKey: .ledgerId)
         try container.encode(name, forKey: .name)
         try container.encode(budgetAmount, forKey: .budgetAmount)
-        try container.encode(isArchived, forKey: .isArchived)
+        if let period {
+            // 兩端都明確送，null 才能把已經設的日期清掉。
+            try container.encode(period.start, forKey: .periodStart)
+            try container.encode(period.end, forKey: .periodEnd)
+        }
     }
 }
 
@@ -86,19 +116,23 @@ public struct TagRuleWrite: Encodable, Sendable {
     public var name: String
     public var budgetAmount: Money?
     public var frequency: Frequency
-    public var isActive: Bool
+    /// 新增時可以不給（後端用帳本時區的今天）；修改時只能往前改。
+    public var startDate: LocalDate?
+    /// nil 是一直持續。一定會送：修改時送 null 就是清掉結束日（重新啟用）。
+    public var endDate: LocalDate?
 
     public init(ledgerId: UUID? = nil, name: String, budgetAmount: Money? = nil,
-                frequency: Frequency, isActive: Bool = true) {
+                frequency: Frequency, startDate: LocalDate? = nil, endDate: LocalDate? = nil) {
         self.ledgerId = ledgerId
         self.name = name
         self.budgetAmount = budgetAmount
         self.frequency = frequency
-        self.isActive = isActive
+        self.startDate = startDate
+        self.endDate = endDate
     }
 
     enum CodingKeys: String, CodingKey {
-        case ledgerId, name, budgetAmount, frequency, isActive
+        case ledgerId, name, budgetAmount, frequency, startDate, endDate
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -107,7 +141,8 @@ public struct TagRuleWrite: Encodable, Sendable {
         try container.encode(name, forKey: .name)
         try container.encode(budgetAmount, forKey: .budgetAmount)
         try container.encode(frequency, forKey: .frequency)
-        try container.encode(isActive, forKey: .isActive)
+        try container.encodeIfPresent(startDate, forKey: .startDate)
+        try container.encode(endDate, forKey: .endDate)
     }
 }
 
@@ -177,11 +212,6 @@ public struct RecurringRuleWrite: Encodable, Sendable {
 
 extension APIClient {
     // MARK: Tag 與預算（N6）
-
-    /// 已封存的 tag（預算頁「顯示已封存」用）。
-    public func archivedTags(ledger: UUID) async throws -> [Tag] {
-        try await getAllPages("api/v2/tags/", query: ["ledger": ledger.apiString, "is_archived": "true"])
-    }
 
     public func createTag(_ tag: TagWrite) async throws -> Tag {
         try decode(try await send("POST", "api/v2/tags/", json: tag))

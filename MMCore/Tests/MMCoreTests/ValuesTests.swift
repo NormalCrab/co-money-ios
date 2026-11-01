@@ -69,6 +69,18 @@ struct CalendarTests {
         #expect(DateText.dayHeader(LocalDate(year: 2025, month: 12, day: 31), today: today) == "2025/12/31（三）")
     }
 
+    @Test("期限的文字：跨年才寫年份；一次性 tag 可以只有一端")
+    func period() {
+        let oct1 = LocalDate(year: 2026, month: 10, day: 1)
+        let oct31 = LocalDate(year: 2026, month: 10, day: 31)
+        #expect(DateText.period(start: oct1, end: oct31) == "10/1 ~ 10/31")
+        #expect(DateText.period(start: LocalDate(year: 2026, month: 12, day: 25),
+                                end: LocalDate(year: 2027, month: 1, day: 3)) == "2026/12/25 ~ 2027/1/3")
+        #expect(DateText.period(start: nil, end: oct31) == "~ 10/31")
+        #expect(DateText.period(start: oct1, end: nil) == "10/1 ~")
+        #expect(DateText.period(start: nil, end: nil) == nil)
+    }
+
     @Test("時間依時區")
     func time() {
         let moment = APICoding.parseDate("2026-10-27T02:42:00Z")!

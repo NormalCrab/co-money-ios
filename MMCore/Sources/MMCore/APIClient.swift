@@ -39,9 +39,11 @@ public struct APIClient: Sendable {
         ])
     }
 
-    /// 帳本裡還沒封存的 tag（預算）。
-    public func activeTags(ledger: UUID) async throws -> [Tag] {
-        try await getAllPages("api/v2/tags/", query: ["ledger": ledger.apiString, "is_archived": "false"])
+    /// 期限和這個月重疊的 tag（§12.6；月份界線依帳本時區，後端算）。
+    public func tags(ledger: UUID, month: YearMonth) async throws -> [Tag] {
+        try await getAllPages("api/v2/tags/", query: [
+            "ledger": ledger.apiString, "year": "\(month.year)", "month": "\(month.month)",
+        ])
     }
 
     // MARK: 交易

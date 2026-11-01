@@ -27,7 +27,7 @@ struct LiveTests {
         let ledger = try #require(try await api.ledgers().first)
         let month = YearMonth(Date(), in: ledger.timeZone)
         _ = try await api.categorySummary(ledger: ledger.id, month: month)
-        _ = try await api.activeTags(ledger: ledger.id)
+        _ = try await api.tags(ledger: ledger.id, month: YearMonth(Date(), in: .current))
 
         let input = TransactionInput(ledgerId: ledger.id, description: "MMCore live test", category: .other,
                                      transactionDate: Date(), amount: Money(string: "12.5"))

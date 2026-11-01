@@ -352,7 +352,7 @@ final class AppModel {
         do {
             async let summary = api.categorySummary(ledger: ledger.id, month: requested)
             async let previous = api.categorySummary(ledger: ledger.id, month: requested.previous)
-            async let tags = api.activeTags(ledger: ledger.id)
+            async let tags = api.tags(ledger: ledger.id, month: requested)
             async let transactions = api.transactions(ledger: ledger.id, month: requested)
             let snapshot = LedgerSnapshot(summary: try await summary, previousSummary: try await previous,
                                           tags: try await tags, transactions: try await transactions)
