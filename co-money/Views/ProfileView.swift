@@ -17,6 +17,14 @@ struct ProfileView: View {
                         LabeledContent("目前帳本", value: model.selectedLedger?.name ?? "—")
                     }
                     Section("設定") {
+                        // 出國時常用，放在最上面，不用從「帳本」一層層點進去。
+                        if let ledger = model.selectedLedger {
+                            NavigationLink {
+                                ExchangeRatesView(ledger: ledger)
+                            } label: {
+                                LabeledContent("匯率", value: ledger.name)
+                            }
+                        }
                         NavigationLink("帳本") { LedgersView() }
                         NavigationLink {
                             InvitationsView()

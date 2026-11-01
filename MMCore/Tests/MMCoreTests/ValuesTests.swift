@@ -23,6 +23,16 @@ struct MoneyTests {
     func exact() {
         #expect(Money(string: "0.1")! + Money(string: "0.2")! == Money(string: "0.3")!)
     }
+
+    @Test("用匯率預估換算後的金額，四捨五入到小數兩位")
+    func convert() {
+        // 1 JPY = 0.215 TWD：1000 日圓約 215 台幣。
+        #expect(Money(1000).converted(at: Money(string: "0.215")!) == 215)
+        // 1 JPY = 0.2153 TWD：999 日圓 = 215.0847 → 215.08。
+        #expect(Money(999).converted(at: Money(string: "0.2153")!) == Money(string: "215.08")!)
+        // 進位：0.005 → 0.01。
+        #expect(Money(string: "0.5")!.converted(at: Money(string: "0.01")!) == Money(string: "0.01")!)
+    }
 }
 
 @Suite("日期")

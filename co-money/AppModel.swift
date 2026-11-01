@@ -70,6 +70,8 @@ final class AppModel {
     private(set) var summary: [CategorySummaryItem] = []
     private(set) var previousSummary: [CategorySummaryItem] = []
     private(set) var tags: [Tag] = []
+    /// 目前帳本的匯率。存進快取，出國沒有網路時記外幣也看得到（N5）。
+    private(set) var exchangeRates: [ExchangeRate] = []
     /// 選定月份的交易。
     private(set) var transactions: [MMCore.Transaction] = []
     private(set) var parseJobs: [ParseJob] = []
@@ -268,6 +270,7 @@ final class AppModel {
         summary = []
         previousSummary = []
         tags = []
+        exchangeRates = []
         parseJobs = []
         outboxItems = []
         updatedAt = nil
@@ -367,12 +370,36 @@ final class AppModel {
                 updatedAt = cached.updatedAt
             }
         }
+        await refreshExchangeRates(ledger)
+    }
+
+    /// 匯率跟月份無關，一個帳本一份快取。讀不到（離線）就留著快取裡的。
+    private func refreshExchangeRates(_ ledger: Ledger) async {
+        guard let rates = try? await api.exchangeRates(ledger: ledger.id) else { return }
+        cache.save(rates, key: ratesKey(ledger.id))
+        if selectedLedgerId == ledger.id { exchangeRates = rates }
+    }
+
+    private func ratesKey(_ ledgerId: UUID) -> String { "\(ledgerId.apiString)-rates" }
+
+    /// 目前帳本的匯率：1 單位 `currency` = 多少帳本幣別；沒有設定回傳 nil。
+    func exchangeRate(for currency: String) -> Money? {
+        exchangeRates.first { $0.currency == currency }?.rate
+    }
+
+    /// 儲存帳本的匯率（整批取代，需要連線）。目前帳本的話也更新畫面用的匯率和快取。
+    func saveExchangeRates(_ rates: [(currency: String, rate: Money)], ledger: UUID) async throws -> [ExchangeRate] {
+        let result = try await api.setExchangeRates(ledger: ledger, rates)
+        cache.save(result, key: ratesKey(ledger))
+        if selectedLedgerId == ledger { exchangeRates = result }
+        return result
     }
 
     func selectLedger(_ id: UUID) async {
         guard id != selectedLedgerId else { return }
         setSelectedLedger(id)
         clearLedgerData()
+        exchangeRates = []
         loadFromCache()
         await refreshLedgerData()
     }
@@ -415,6 +442,9 @@ final class AppModel {
            let cached = cache.load(LedgerSnapshot.self, key: "\(ledger.id.apiString)-\(month)") {
             apply(cached.value)
             updatedAt = cached.updatedAt
+        }
+        if let ledger = selectedLedger, let cached = cache.load([ExchangeRate].self, key: ratesKey(ledger.id)) {
+            exchangeRates = cached.value
         }
     }
 

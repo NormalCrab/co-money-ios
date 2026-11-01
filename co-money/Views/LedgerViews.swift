@@ -451,14 +451,22 @@ struct InvitationsView: View {
 // MARK: - 匯率（N5）
 
 /// 帳本的匯率：1 單位外幣 = 多少帳本幣別。所有成員都可以改；儲存是整批取代。
+///
+/// 從「記一筆」打開時帶 `addCurrency`：還沒有那個幣別就先加一列，直接輸入。
 struct ExchangeRatesView: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
     let ledger: Ledger
+    var addCurrency: String?
+    /// 以 sheet 打開時，存好就關掉。
+    var dismissOnSave = false
 
     struct Row: Identifiable, Hashable {
         let id = UUID()
         var currency: String
         var text: String
+        /// 「Ting・10/27 更新」：出國時判斷匯率是不是太舊。
+        var note: String?
     }
 
     @State private var rows: [Row] = []
@@ -466,15 +474,24 @@ struct ExchangeRatesView: View {
     @State private var isSaving = false
     @State private var error: String?
     @State private var saved = false
+    @FocusState private var focusedRow: UUID?
 
     var body: some View {
         Form {
             Section {
                 ForEach($rows) { $row in
-                    HStack {
-                        Text("1 \(row.currency) =")
-                        TextField("0", text: $row.text).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
-                        Text(ledger.currency).foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text("1 \(row.currency) =")
+                            TextField("0", text: $row.text)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .focused($focusedRow, equals: row.id)
+                            Text(ledger.currency).foregroundStyle(.secondary)
+                        }
+                        if let note = row.note {
+                            Text(note).font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                 }
                 .onDelete { rows.remove(atOffsets: $0) }
@@ -484,7 +501,7 @@ struct ExchangeRatesView: View {
                 if !addable.isEmpty {
                     Menu("新增幣別") {
                         ForEach(addable, id: \.self) { code in
-                            Button(code) { rows.append(Row(currency: code, text: "")) }
+                            Button(code) { addRow(code) }
                         }
                     }
                 }
@@ -494,13 +511,32 @@ struct ExchangeRatesView: View {
             if saved { Section { Text("已儲存").font(.footnote).foregroundStyle(.secondary) } }
             FormStatus(error: error, needsConnection: model.isOffline)
         }
-        .navigationTitle("匯率")
+        .navigationTitle("匯率・\(ledger.name)")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if dismissOnSave {
+                ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("儲存") { Task { await save() } }.bold().disabled(!canSave)
             }
         }
         .task { await load() }
+    }
+
+    private func addRow(_ currency: String) {
+        let row = Row(currency: currency, text: "")
+        rows.append(row)
+        focusedRow = row.id
+    }
+
+    private func makeRows(_ rates: [ExchangeRate]) -> [Row] {
+        rates.map { rate in
+            let parts = [rate.updatedBy?.username,
+                         rate.updatedAt.map { "\($0.formatted(.dateTime.month().day())) 更新" }].compactMap { $0 }
+            return Row(currency: rate.currency, text: rate.rate.apiString,
+                       note: parts.isEmpty ? nil : parts.joined(separator: "・"))
+        }
     }
 
     private var addable: [String] {
@@ -518,9 +554,19 @@ struct ExchangeRatesView: View {
 
     private func load() async {
         if let list = try? await model.api.exchangeRates(ledger: ledger.id) {
-            rows = list.map { Row(currency: $0.currency, text: $0.rate.apiString) }
+            rows = makeRows(list)
+        } else if ledger.id == model.selectedLedger?.id {
+            // 離線：顯示快取裡的匯率（不能存，但看得到）。
+            rows = makeRows(model.exchangeRates)
         }
         loaded = true
+        if let addCurrency, addCurrency != ledger.currency {
+            if let existing = rows.first(where: { $0.currency == addCurrency }) {
+                focusedRow = existing.id
+            } else {
+                addRow(addCurrency)
+            }
+        }
     }
 
     private func save() async {
@@ -528,10 +574,11 @@ struct ExchangeRatesView: View {
         saved = false
         error = await runRequest {
             let rates = rows.compactMap { row in parsed(row).map { (currency: row.currency, rate: $0) } }
-            let result = try await model.api.setExchangeRates(ledger: ledger.id, rates)
-            rows = result.map { Row(currency: $0.currency, text: $0.rate.apiString) }
+            let result = try await model.saveExchangeRates(rates, ledger: ledger.id)
+            rows = makeRows(result)
         }
         isSaving = false
         saved = error == nil
+        if saved && dismissOnSave { dismiss() }
     }
 }

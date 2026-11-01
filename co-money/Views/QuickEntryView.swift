@@ -13,6 +13,7 @@ struct QuickEntryView: View {
     @State private var isSaving = false
     @State private var saveError: String?
     @State private var confirmDelete = false
+    @State private var settingRate = false
 
     @State private var ledgerId: UUID?
     @State private var type: TransactionType = .expense
@@ -55,6 +56,7 @@ struct QuickEntryView: View {
                         .labelsHidden()
                         .disabled(editing != nil)  // 已上傳交易的幣別不能改（換算由後端決定）
                     }
+                    foreignCurrencyInfo
                 }
 
                 Section("分類") {
@@ -131,6 +133,13 @@ struct QuickEntryView: View {
                 }
             }
             .navigationTitle(editing == nil ? "記一筆" : "修改交易")
+            .sheet(isPresented: $settingRate) {
+                if let ledger {
+                    NavigationStack {
+                        ExchangeRatesView(ledger: ledger, addCurrency: currency, dismissOnSave: true)
+                    }
+                }
+            }
             .confirmationDialog("刪除這筆交易？", isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button("刪除", role: .destructive, action: deleteTransaction)
             } message: {
@@ -166,6 +175,38 @@ struct QuickEntryView: View {
     }
 
     private var ledger: Ledger? { model.ledgers.first { $0.id == ledgerId } }
+
+    /// 選了外幣：顯示帳本匯率和預估金額；沒有匯率就提醒並可以直接設定（N5）。
+    /// 只知道目前帳本的匯率，記到別的帳本時不顯示。
+    @ViewBuilder private var foreignCurrencyInfo: some View {
+        if editing == nil, let ledger, currency != ledger.currency, ledger.id == model.selectedLedger?.id {
+            if let rate = model.exchangeRate(for: currency) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("1 \(currency) = \(rate.apiString) \(ledger.currency)")
+                    if let amount = Money(userInput: amountText), amount.value > 0 {
+                        Text("約 \(ledger.currency) \(amount.converted(at: rate).display)，實際金額由後端換算")
+                    }
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                Button("修改 \(currency) 匯率") { settingRate = true }
+                    .font(.footnote)
+                    .disabled(model.isOffline)
+            } else {
+                VStack(alignment: .leading, spacing: 4) {
+                    Label("這個帳本還沒有 \(currency) 的匯率", systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(Palette.warning)
+                    Text(model.isOffline
+                         ? "離線時不能設定匯率。這筆會先存起來；送出時如果還沒有匯率，會到「待處理」讓你補上換算後的金額。"
+                         : "沒有匯率的話，這筆送出後會到「待處理」，要你自己補上換算後的金額。")
+                        .foregroundStyle(.secondary)
+                }
+                .font(.footnote)
+                Button("設定 \(currency) 匯率") { settingRate = true }
+                    .disabled(model.isOffline)
+            }
+        }
+    }
 
     private var currencyOptions: [String] {
         Currencies.options(base: ledger?.currency ?? "TWD")

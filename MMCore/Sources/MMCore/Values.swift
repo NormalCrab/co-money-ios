@@ -55,6 +55,15 @@ public struct Money: Codable, Hashable, Sendable, Comparable, ExpressibleByInteg
         return formatter.string(from: NSDecimalNumber(decimal: value)) ?? apiString
     }
 
+    /// 用帳本匯率（1 外幣 = `rate` 帳本幣別）換算，四捨五入到小數兩位。
+    /// 只給畫面預覽用；存進資料庫的金額由後端換算（§0 原則 3）。
+    public func converted(at rate: Money) -> Money {
+        var product = value * rate.value
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &product, 2, .plain)
+        return Money(rounded)
+    }
+
     public static func < (lhs: Money, rhs: Money) -> Bool { lhs.value < rhs.value }
     public static func + (lhs: Money, rhs: Money) -> Money { Money(lhs.value + rhs.value) }
     public static func - (lhs: Money, rhs: Money) -> Money { Money(lhs.value - rhs.value) }
