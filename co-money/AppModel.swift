@@ -25,9 +25,7 @@ enum Server: String, CaseIterable, Identifiable {
         #if DEBUG
         return .staging
         #else
-        // 正式環境（codai8.com）還沒有 v2 API，在上線之前 Release 也先連 staging。
-        // 後端上線後改回 .production（REQUIREMENTS A8）。
-        return .staging
+        return .production
         #endif
     }
 }

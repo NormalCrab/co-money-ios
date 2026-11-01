@@ -92,7 +92,7 @@ MM_LIVE_URL=https://newsroom.codai8.com/ MM_LIVE_USER=<帳號> MM_LIVE_PASSWORD=
 
 用 Alex 的帳號會在他的第一個帳本建立再刪除測試交易；最好請他在 staging 開一個測試帳號。
 
-- Debug 預設連 staging。**Release 目前也預設 staging**，因為正式環境還沒有 v2 API（REQUIREMENTS A8）。
+- Debug 預設連 staging，Release 預設連正式環境（2026-11-01 正式環境的 v2 API 上線後改回）。
   「我」頁面可以切換，兩邊的 token、待上傳、快取分開存。
 - 最低 iOS 17，Swift 6 語言模式（嚴格並行檢查）。專案刻意**沒有**開
   `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`、`SWIFT_APPROACHABLE_CONCURRENCY`、`MEMBER_IMPORT_VISIBILITY`：
@@ -100,9 +100,10 @@ MM_LIVE_URL=https://newsroom.codai8.com/ MM_LIVE_USER=<帳號> MM_LIVE_PASSWORD=
 
 ## 5. 上架前一定要做
 
-- `co-money/AppModel.swift` 的 `Server.saved`：Release 改回 `.production`（後端的 v2 API 上線之後）。
-  在那之前**不能送審**，否則上架版會連到 staging。
-- `CURRENT_PROJECT_VERSION`（build number）要比 App Store Connect 上用過的大（目前是 7）。
+- 確認 `co-money/AppModel.swift` 的 `Server.saved` 在 Release 是 `.production`。
+- `CURRENT_PROJECT_VERSION`（build number）要比 App Store Connect 上用過的大，每次上傳都加一。
+- 上傳方式：在 Mac 上 archive（Release）再用 `xcodebuild -exportArchive` 上傳到 App Store Connect，
+  或在 Xcode 的 Organizer 上傳。
 - 已宣告 `ITSAppUsesNonExemptEncryption = NO`（只用 HTTPS 和 Keychain）。
 - Xcode Cloud 設定在 `co-money.xcodeproj/xcshareddata/xcodecloud/`。
 

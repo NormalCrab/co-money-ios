@@ -21,8 +21,7 @@ django-mm v2 API 的 iOS app，App Store 上的 co-money（`com.codai8.co-money`
 open co-money.xcodeproj
 ```
 
-- Debug 連 staging（newsroom.codai8.com）。Release 原本要連正式環境（codai8.com），
-  但正式環境還沒有 v2 API，**目前 Release 也連 staging，上線前不能送審**（見 `CLAUDE.md` §5）。
+- Debug 連 staging（newsroom.codai8.com），Release 連正式環境（codai8.com）。
   「我」頁面可以切換，兩邊的登入和待上傳資料分開保存。
 - 最低 iOS 17，Swift 6 語言模式。
 
