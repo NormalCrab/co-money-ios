@@ -9,3 +9,6 @@ DerivedData/
 
 # Claude Code
 .claude/
+
+# Swift Package Manager
+.build/
