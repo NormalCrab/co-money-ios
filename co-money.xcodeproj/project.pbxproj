@@ -99,10 +99,10 @@
 				Base,
 			);
 			mainGroup = B618A5652F694E66000B8127;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B618A5A12F694E70000B8127 /* XCLocalSwiftPackageReference "MMCore" */,
 			);
-			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B618A56F2F694E66000B8127 /* Products */;
 			projectDirPath = "";
@@ -132,20 +132,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		B618A5A12F694E70000B8127 /* XCLocalSwiftPackageReference "MMCore" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = MMCore;
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B618A5A22F694E70000B8127 /* MMCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MMCore;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B618A5772F694E67000B8127 /* Debug */ = {
@@ -277,7 +263,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
@@ -311,7 +297,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
@@ -361,6 +347,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B618A5A12F694E70000B8127 /* XCLocalSwiftPackageReference "MMCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MMCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B618A5A22F694E70000B8127 /* MMCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MMCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B618A5662F694E66000B8127 /* Project object */;
 }
