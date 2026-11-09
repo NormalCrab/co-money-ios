@@ -66,7 +66,17 @@ struct HomeView: View {
             } message: {
                 Text("修改或刪除已上傳的交易需要連線。")
             }
+            // 點了提醒通知：打開「記一筆」。冷啟動時通知比首頁先到，所以出現時也要看一次。
+            .onAppear(perform: openQuickEntryIfRequested)
+            .onChange(of: model.pendingQuickEntry) { _, _ in openQuickEntryIfRequested() }
         }
+    }
+
+    private func openQuickEntryIfRequested() {
+        guard model.pendingQuickEntry else { return }
+        model.pendingQuickEntry = false
+        editing = nil
+        entry = .form
     }
 
     private var monthCard: some View {

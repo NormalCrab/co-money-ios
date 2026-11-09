@@ -63,16 +63,29 @@ struct RootView: View {
 }
 
 struct MainTabs: View {
+    @Environment(AppModel.self) private var model
+
+    enum Tab: Hashable { case home, transactions, budgets, profile }
+    @State private var tab = Tab.home
+
     var body: some View {
-        TabView {
+        TabView(selection: $tab) {
             HomeView()
                 .tabItem { Label("首頁", systemImage: "house") }
+                .tag(Tab.home)
             TransactionsView()
                 .tabItem { Label("交易", systemImage: "list.bullet") }
+                .tag(Tab.transactions)
             BudgetsView()
                 .tabItem { Label("預算", systemImage: "chart.pie") }
+                .tag(Tab.budgets)
             ProfileView()
                 .tabItem { Label("我", systemImage: "person") }
+                .tag(Tab.profile)
+        }
+        // 點了提醒通知：回到首頁，由首頁打開「記一筆」。
+        .onChange(of: model.pendingQuickEntry) { _, pending in
+            if pending { tab = .home }
         }
     }
 }

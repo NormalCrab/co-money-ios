@@ -54,7 +54,7 @@ co-money/           SwiftUI app（只能在 Mac 編譯）
   MMApp.swift        @main、TabView、回前景同步、BGAppRefreshTask
   AppModel.swift     @Observable 的全域狀態：登入、資料、快取、待上傳；畫面只呼叫它
   Services/          KeychainTokenStore、Connectivity（NWPathMonitor）、VoiceRecorder（錄音 + Speech）、
-                     ReceiptScanner（Vision OCR + QR）
+                     ReceiptScanner（Vision OCR + QR）、ReminderCenter（提醒記帳的本機通知）
   Views/             Home、QuickEntry、VoiceEntry（含打字）、ReceiptEntry、DraftReview（確認解析結果，
                      含 ParseProgress）、Inbox（待處理）、Transactions、Budgets、BudgetEditors、Profile、
                      Login、LedgerViews、RecurringRulesView、Components
