@@ -55,7 +55,7 @@ co-money/           SwiftUI app（只能在 Mac 編譯）
   AppModel.swift     @Observable 的全域狀態：登入、資料、快取、待上傳；畫面只呼叫它
   Services/          KeychainTokenStore、Connectivity（NWPathMonitor）、VoiceRecorder（錄音 + Speech）、
                      ReceiptScanner（Vision OCR + QR）
-  Views/             Home、QuickEntry、TextEntry、VoiceEntry、ReceiptEntry、DraftReview（確認解析結果，
+  Views/             Home、QuickEntry、VoiceEntry（含打字）、ReceiptEntry、DraftReview（確認解析結果，
                      含 ParseProgress）、Inbox（待處理）、Transactions、Budgets、BudgetEditors、Profile、
                      Login、LedgerViews、RecurringRulesView、Components
   Assets.xcassets    App icon（沿用 co-money 的）
@@ -142,7 +142,7 @@ MM_LIVE_URL=https://newsroom.codai8.com/ MM_LIVE_USER=<帳號> MM_LIVE_PASSWORD=
 - `co-money/` 全部畫面，在 Mac 上 Xcode build 通過（模擬器與實機）；在模擬器上能啟動到登入畫面。
 
 **接下來依序做**（細項與驗收方式看 `REQUIREMENTS.md`）：
-1. **在模擬器跑一遍**：登入（staging）→ 首頁 → 記一筆 → 文字輸入 → 待處理確認 → 交易列表。
+1. **在模擬器跑一遍**：登入（staging）→ 首頁 → 記一筆 → 語音畫面的「改用打字」 → 待處理確認 → 交易列表。
    飛航模式下記一筆，恢復網路後確認自動送出。
 2. **實機測錄音與語音辨識**（`VoiceRecorder`）：音檔格式、`AVAudioSession`、離線辨識。
 3. **實機測拍收據**：OCR 品質、電子發票 QR。拿真的發票 QR 內容補進 `MMCore/Tests/MMCoreTests/ReceiptTests.swift`
@@ -157,6 +157,9 @@ MM_LIVE_URL=https://newsroom.codai8.com/ MM_LIVE_USER=<帳號> MM_LIVE_PASSWORD=
   或標成 `@Sendable`。`VoiceRecorder`、`Connectivity`、`MMApp.scheduleBackgroundSync` 已經這樣處理，新加的 callback 也要注意。
 - **`Transaction` 和 SwiftUI 的同名型別衝突**：在 import SwiftUI 的檔案裡要寫 `MMCore.Transaction`。
 - `TransactionCategory` 不能改名成 `Category`：ObjectiveC 模組已經有同名型別。
+- **名稱**：畫面上一律叫「固定收支」，程式和 API 裡是 `RecurringRule` / `recurring-rules`（重複交易規則）。
+  建立規則時開始日不能早於今天：後端會把開始日到今天之間的每一期都補產生交易。
+- 在測試（import Testing）裡要寫 `MMCore.Tag`：Swift Testing 也有 `Tag`。
 - `JSONEncoder` 把 UUID 寫成大寫；後端不分大小寫，但比較 id 時用 `UUID` 比，不要比字串。
   網址裡用 `uuid.apiString`（小寫）。
 - 讀網址路徑用 `URLComponents(...).path`，`URL.path` 會去掉結尾的 `/`。

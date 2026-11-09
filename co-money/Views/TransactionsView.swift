@@ -141,7 +141,7 @@ struct TransactionRow: View {
         parts.append(transaction.payer.username)
         if transaction.transactionType == .income { parts.append("收入") }
         parts += transaction.tags.map(\.name)
-        if transaction.recurringRule != nil { parts.append("重複交易") }
+        if transaction.recurringRule != nil { parts.append("固定收支") }
         return parts.joined(separator: "・")
     }
 }

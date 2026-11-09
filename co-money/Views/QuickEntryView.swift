@@ -14,6 +14,7 @@ struct QuickEntryView: View {
     @State private var saveError: String?
     @State private var confirmDelete = false
     @State private var settingRate = false
+    @State private var makingFixed = false
 
     @State private var ledgerId: UUID?
     @State private var type: TransactionType = .expense
@@ -111,7 +112,7 @@ struct QuickEntryView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("付款人是你自己。重複交易在「我 → 重複交易」設定。")
+                        Text("付款人是你自己。每期固定的帳可以在首頁的「固定收支」設定。")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
@@ -123,7 +124,17 @@ struct QuickEntryView: View {
                     }
                 }
 
-                if editing != nil {
+                if let editing {
+                    if editing.recurringRule == nil {
+                        Section {
+                            Button { makingFixed = true } label: {
+                                Label("設成固定收支", systemImage: "arrow.triangle.2.circlepath")
+                            }
+                            .disabled(isSaving || model.isOffline)
+                        } footer: {
+                            Text("用這筆的內容建立每期自動記帳的規則，例如房租、訂閱。")
+                        }
+                    }
                     Section {
                         // 刪除需要連線（§4.1），和修改一樣。
                         Button("刪除這筆交易", role: .destructive) { confirmDelete = true }
@@ -133,6 +144,11 @@ struct QuickEntryView: View {
                 }
             }
             .navigationTitle(editing == nil ? "記一筆" : "修改交易")
+            .sheet(isPresented: $makingFixed) {
+                if let editing {
+                    RecurringRuleEditor(prefill: editing)
+                }
+            }
             .sheet(isPresented: $settingRate) {
                 if let ledger {
                     NavigationStack {

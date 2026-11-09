@@ -69,6 +69,14 @@ struct CalendarTests {
         #expect(DateText.dayHeader(LocalDate(year: 2025, month: 12, day: 31), today: today) == "2025/12/31（三）")
     }
 
+    @Test("隔天：跨月、跨年、閏年")
+    func nextDay() {
+        #expect(LocalDate(year: 2026, month: 11, day: 9).nextDay == LocalDate(year: 2026, month: 11, day: 10))
+        #expect(LocalDate(year: 2026, month: 2, day: 28).nextDay == LocalDate(year: 2026, month: 3, day: 1))
+        #expect(LocalDate(year: 2028, month: 2, day: 28).nextDay == LocalDate(year: 2028, month: 2, day: 29))
+        #expect(LocalDate(year: 2026, month: 12, day: 31).nextDay == LocalDate(year: 2027, month: 1, day: 1))
+    }
+
     @Test("期限的文字：跨年才寫年份；一次性 tag 可以只有一端")
     func period() {
         let oct1 = LocalDate(year: 2026, month: 10, day: 1)

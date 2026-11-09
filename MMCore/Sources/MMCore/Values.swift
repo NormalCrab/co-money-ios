@@ -117,6 +117,15 @@ public struct LocalDate: Codable, Hashable, Sendable, Comparable, CustomStringCo
     public static func < (lhs: LocalDate, rhs: LocalDate) -> Bool {
         (lhs.year, lhs.month, lhs.day) < (rhs.year, rhs.month, rhs.day)
     }
+
+    /// 隔天。純日期運算，和時區無關（用 UTC 的公曆算）。
+    public var nextDay: LocalDate {
+        let calendar = Calendar.gregorian(TimeZone(identifier: "UTC")!)
+        let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        let next = calendar.date(byAdding: .day, value: 1, to: date)!
+        let parts = calendar.dateComponents([.year, .month, .day], from: next)
+        return LocalDate(year: parts.year!, month: parts.month!, day: parts.day!)
+    }
 }
 
 extension Calendar {

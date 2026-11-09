@@ -4,6 +4,7 @@ import SwiftUI
 /// 語音記帳（設計畫布「Voice」，ios-design §1.1）。
 ///
 /// 按住說話、放開停止；往上滑取消。辨識出的文字可以修改再送出。
+/// 不方便說話、或要貼上一段文字（銀行簡訊、分帳訊息）時可以改用打字，一句話可以寫好幾筆。
 struct VoiceEntryView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -19,17 +20,22 @@ struct VoiceEntryView: View {
     /// 手指正按在麥克風上。錄音自動停在 60 秒時手指通常還沒放開，
     /// 不能因為手指又動了一下就重新開始錄。
     @State private var pressing = false
+    /// 改用打字（取代原本首頁的「文字」入口）。
+    @State private var typing = false
+    @FocusState private var typingFocused: Bool
 
     var body: some View {
         NavigationStack {
             Group {
                 if let upload {
                     ParseProgress(upload: upload)
+                } else if typing {
+                    typingForm
                 } else {
                     recording
                 }
             }
-            .navigationTitle("語音記帳")
+            .navigationTitle(typing ? "打字記帳" : "語音記帳")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -38,10 +44,10 @@ struct VoiceEntryView: View {
                         dismiss()
                     }
                 }
-                if upload == nil && recorder.state == .finished {
+                if upload == nil && (typing || recorder.state == .finished) {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("送出", action: submit).bold()
-                            .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
+                            .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
                 }
             }
@@ -95,7 +101,7 @@ struct VoiceEntryView: View {
                 Text(message).foregroundStyle(Palette.warning)
             }
             if permissionDenied {
-                Text("需要麥克風和語音辨識的權限，請到「設定」開啟。")
+                Text("需要麥克風和語音辨識的權限，請到「設定」開啟，或改用打字。")
                     .font(.footnote)
                     .foregroundStyle(Palette.warning)
                 Button("開啟設定") {
@@ -108,8 +114,45 @@ struct VoiceEntryView: View {
             Text(recorder.state == .recording ? (cancelling ? "放開取消" : "放開停止・往上滑取消") : "按住說話")
                 .font(.footnote)
                 .foregroundStyle(cancelling ? Palette.warning : .secondary)
+
+            if recorder.state != .recording {
+                Button(action: switchToTyping) {
+                    Label("改用打字", systemImage: "keyboard")
+                        .font(.subheadline.weight(.medium))
+                }
+                .buttonStyle(.bordered)
+                .tint(Palette.accent)
+            }
         }
         .padding(.vertical, 24)
+    }
+
+    private var typingForm: some View {
+        Form {
+            Section {
+                TextField("午餐便當 120，晚上全聯買菜 1280 刷卡", text: $text, axis: .vertical)
+                    .lineLimit(3...8)
+                    .focused($typingFocused)
+            } header: {
+                Text("用一句話描述，可以一次寫好幾筆")
+            } footer: {
+                Text("也可以貼上銀行簡訊或分帳訊息。記到：\(model.selectedLedger?.name ?? "")")
+            }
+            Section {
+                Button { typing = false } label: {
+                    Label("改用語音", systemImage: "mic")
+                }
+                .disabled(permissionDenied)
+            }
+        }
+        .onAppear { typingFocused = true }
+    }
+
+    /// 改成打字：剛錄的辨識文字留著繼續改，錄音檔不需要了（打字送出不附音檔）。
+    private func switchToTyping() {
+        recorder.cancel()
+        discardRecording()
+        typing = true
     }
 
     private var waveform: some View {
@@ -167,8 +210,12 @@ struct VoiceEntryView: View {
 
     private func submit() {
         guard let ledger = model.selectedLedger else { return }
-        upload = ParseJobUpload(ledgerId: ledger.id, source: .voice,
-                                text: text.trimmingCharacters(in: .whitespacesAndNewlines),
-                                capturedAt: capturedAt, audioFile: audioName)
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if typing {
+            upload = ParseJobUpload(ledgerId: ledger.id, source: .manual, text: trimmed, capturedAt: Date())
+        } else {
+            upload = ParseJobUpload(ledgerId: ledger.id, source: .voice, text: trimmed,
+                                    capturedAt: capturedAt, audioFile: audioName)
+        }
     }
 }

@@ -1,12 +1,15 @@
 import MMCore
 import SwiftUI
 
-/// 首頁（設計畫布「Main」）：本月花費、四個記帳入口、預算、最近交易。
+/// 首頁（設計畫布「Main」）：本月花費、三個記帳入口、預算、固定收支、最近交易。
+///
+/// 記帳入口只放「把剛剛那筆記下來」的方式（離線都能用）；打字在語音畫面裡。
+/// 固定收支是設定，不放進記帳入口，用下面的卡片介紹和管理。
 struct HomeView: View {
     @Environment(AppModel.self) private var model
 
     enum Entry: String, Identifiable {
-        case form, voice, receipt, text
+        case form, voice, receipt
         var id: String { rawValue }
     }
 
@@ -14,6 +17,9 @@ struct HomeView: View {
     @State private var showInbox = false
     @State private var editing: MMCore.Transaction?
     @State private var offlineNotice = false
+    @State private var showFixed = false
+    @State private var editingRule: RecurringRule?
+    @State private var creatingRule = false
 
     var body: some View {
         NavigationStack {
@@ -24,6 +30,7 @@ struct HomeView: View {
                         monthCard
                         entryButtons
                         if !model.monthBudgets.isEmpty { budgetsCard }
+                        if let rules = model.recurringRules { fixedCard(rules) }
                         recentCard
                     }
                     .padding(16)
@@ -48,13 +55,19 @@ struct HomeView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(isPresented: $showInbox) { InboxView() }
+            .navigationDestination(isPresented: $showFixed) { RecurringRulesView() }
             .sheet(item: $entry) { entry in
                 switch entry {
                 case .form: QuickEntryView()
                 case .voice: VoiceEntryView()
                 case .receipt: ReceiptEntryView()
-                case .text: TextEntryView()
                 }
+            }
+            .sheet(item: $editingRule) { rule in
+                RecurringRuleEditor(editing: rule)
+            }
+            .sheet(isPresented: $creatingRule) {
+                RecurringRuleEditor()
             }
             .sheet(item: $editing) { transaction in
                 QuickEntryView(editing: transaction)
@@ -97,7 +110,6 @@ struct HomeView: View {
             entryButton("記一筆", "plus", .form, primary: true)
             entryButton("語音", "mic", .voice)
             entryButton("拍收據", "doc.viewfinder", .receipt)
-            entryButton("文字", "text.bubble", .text)
         }
     }
 
@@ -133,6 +145,48 @@ struct HomeView: View {
                 }
             }
         }
+        .card()
+    }
+
+    /// 固定收支（N8）：還沒設定時介紹並引導設定；設定過就列出接下來會自動記的幾筆。
+    private func fixedCard(_ rules: [RecurringRule]) -> some View {
+        let upcoming = Array(rules.upcoming().prefix(3))
+        return VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("固定收支").font(.headline)
+                Spacer()
+                if !rules.isEmpty {
+                    Button("全部") { showFixed = true }.font(.subheadline)
+                }
+            }
+            .padding(.bottom, 8)
+
+            if rules.isEmpty {
+                Text("房租、訂閱、薪水這類固定的收支，設定一次，之後每期自動記帳。")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Button { creatingRule = true } label: {
+                    Label("設定固定收支", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.subheadline.weight(.medium))
+                }
+                .buttonStyle(.bordered)
+                .tint(Palette.accent)
+                .padding(.top, 10)
+            } else if upcoming.isEmpty {
+                Text("目前沒有進行中的固定收支").font(.subheadline).foregroundStyle(.secondary)
+            } else {
+                ForEach(upcoming) { rule in
+                    Button { editingRule = rule } label: {
+                        RecurringRuleRow(rule: rule)
+                            .padding(.vertical, 6)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    if rule.id != upcoming.last?.id { Divider() }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .card()
     }
 

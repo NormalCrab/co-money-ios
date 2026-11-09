@@ -65,6 +65,28 @@ public struct RecurringRule: Codable, Hashable, Sendable, Identifiable {
     public var isActive: Bool
 }
 
+extension RecurringRule {
+    /// 之後還會再產生交易：啟用中，而且下次執行日沒有超過結束日。
+    public var willRunAgain: Bool {
+        guard isActive else { return false }
+        guard let endDate else { return true }
+        return nextRunDate <= endDate
+    }
+
+    /// 從一筆已經記下的交易設定固定收支時的開始日：交易的隔天（這筆不會被後端再產生一次），
+    /// 但不早於今天（開始日在過去的話，後端會把中間錯過的每一期都補產生出來）。
+    public static func firstStart(afterTransactionOn day: LocalDate, today: LocalDate) -> LocalDate {
+        max(day.nextDay, today)
+    }
+}
+
+extension Array where Element == RecurringRule {
+    /// 首頁「固定收支」卡：之後還會產生交易的規則，依下次執行日排序。
+    public func upcoming() -> [RecurringRule] {
+        filter(\.willRunAgain).sorted { $0.nextRunDate < $1.nextRunDate }
+    }
+}
+
 /// 新增 / 修改 tag（一次性 tag；週期 tag 由 `TagRule` 產生）。
 /// 預算金額清掉時要明確送 null，只是省略的話後端會保留舊的。
 public struct TagWrite: Encodable, Sendable {

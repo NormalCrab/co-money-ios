@@ -21,11 +21,12 @@ private func scheduleText(frequency: Frequency, day: Int, startMonth: Int) -> St
     }
 }
 
-/// 重複交易規則的清單（N8、v2 §2.7）：房租、訂閱這類固定的帳，到期由後端自動產生交易。
+/// 固定收支（重複交易規則，N8、v2 §2.7）：房租、訂閱、薪水這類固定的帳，到期由後端自動產生交易。
 struct RecurringRulesView: View {
     @Environment(AppModel.self) private var model
     @State private var rules: [RecurringRule] = []
     @State private var loaded = false
+    @State private var loadError: String?
     @State private var editing: RecurringRule?
     @State private var creating = false
 
@@ -33,15 +34,18 @@ struct RecurringRulesView: View {
         VStack(spacing: 0) {
             OfflineBanner()
             List {
-                ForEach(rules) { rule in
-                    Button { editing = rule } label: { row(rule) }
+                if let loadError {
+                    Text(loadError).font(.footnote).foregroundStyle(Palette.warning)
                 }
-                if loaded && rules.isEmpty {
-                    Text("還沒有重複交易，按右上角的「＋」新增。").foregroundStyle(.secondary)
+                ForEach(rules) { rule in
+                    Button { editing = rule } label: { RecurringRuleRow(rule: rule) }
+                }
+                if loaded && loadError == nil && rules.isEmpty {
+                    Text("還沒有固定收支，按右上角的「＋」新增。").foregroundStyle(.secondary)
                 }
             }
         }
-        .navigationTitle("重複交易")
+        .navigationTitle("固定收支")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { creating = true } label: { Image(systemName: "plus") }
@@ -57,45 +61,67 @@ struct RecurringRulesView: View {
         }
     }
 
-    private func row(_ rule: RecurringRule) -> some View {
+    private func load() async {
+        guard let ledger = model.selectedLedger else { return }
+        do {
+            rules = try await model.api.recurringRules(ledger: ledger.id)
+            loadError = nil
+        } catch let error as APIError {
+            loadError = error.message
+        } catch {
+            loadError = error.localizedDescription
+        }
+        loaded = true
+    }
+}
+
+/// 一條固定收支：分類圖示、描述、排程與下次日期、金額。清單和首頁卡片共用。
+struct RecurringRuleRow: View {
+    let rule: RecurringRule
+
+    var body: some View {
         HStack(spacing: 12) {
             CategoryIcon(category: rule.category)
             VStack(alignment: .leading, spacing: 2) {
                 Text(rule.description).foregroundStyle(.primary)
-                Text(detail(rule)).font(.caption).foregroundStyle(.secondary)
+                Text(detail).font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
-            Text(amountText(rule)).font(.body.monospacedDigit()).foregroundStyle(.primary)
+            Text(amountText).font(.body.monospacedDigit())
+                .foregroundStyle(rule.transactionType == .income ? Palette.income : .primary)
         }
-        .opacity(rule.isActive ? 1 : 0.5)
+        .opacity(rule.willRunAgain ? 1 : 0.5)
     }
 
-    private func amountText(_ rule: RecurringRule) -> String {
+    private var amountText: String {
         if let original = rule.originalAmount, let currency = rule.originalCurrency {
             return "\(currency) \(original.display)"
         }
         return (rule.amount ?? .zero).signed(for: rule.transactionType)
     }
 
-    private func detail(_ rule: RecurringRule) -> String {
+    private var detail: String {
         var parts = [scheduleText(frequency: rule.frequency, day: rule.day, startMonth: rule.startDate.month)]
-        parts.append(rule.isActive ? "下次 \(rule.nextRunDate.month)/\(rule.nextRunDate.day)" : "已停用")
+        if !rule.isActive {
+            parts.append("已停用")
+        } else if rule.willRunAgain {
+            parts.append("下次 \(rule.nextRunDate.month)/\(rule.nextRunDate.day)")
+        } else {
+            parts.append("已結束")
+        }
         return parts.joined(separator: "・")
-    }
-
-    private func load() async {
-        guard let ledger = model.selectedLedger else { return }
-        if let list = try? await model.api.recurringRules(ledger: ledger.id) { rules = list }
-        loaded = true
     }
 }
 
-/// 新增 / 修改重複交易規則。付款人固定是建立者；帳本建立後不能換。
+/// 新增 / 修改固定收支（重複交易規則）。付款人固定是建立者；帳本建立後不能換。
+///
+/// 從一筆交易打開時帶 `prefill`：用它的內容預先填好，開始日是那筆的下一期（見 `RecurringRule.firstStart`）。
 struct RecurringRuleEditor: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
     var editing: RecurringRule?
+    var prefill: MMCore.Transaction?
     var onSaved: () async -> Void = {}
 
     @State private var description = ""
@@ -170,7 +196,9 @@ struct RecurringRuleEditor: View {
                     Text("排程")
                 } footer: {
                     Text(scheduleSummary + (frequency == .monthly || frequency == .yearly
-                                            ? "。遇到較短的月份，會用該月最後一天。" : "。"))
+                                            ? "。遇到較短的月份，會用該月最後一天。" : "。")
+                         + "到期時自動記帳，不用再手動記。"
+                         + (prefill != nil ? "從這筆的下一期開始，這筆不會被重複記。" : ""))
                 }
 
                 if !tagChoices.isEmpty {
@@ -210,7 +238,7 @@ struct RecurringRuleEditor: View {
                 }
                 FormStatus(error: error, needsConnection: model.isOffline)
             }
-            .navigationTitle(editing == nil ? "新增重複交易" : "修改重複交易")
+            .navigationTitle(editing == nil ? "新增固定收支" : "修改固定收支")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
@@ -254,6 +282,7 @@ struct RecurringRuleEditor: View {
 
     private func load() {
         guard let editing else {
+            if let prefill { load(prefill) }
             currency = currency.isEmpty ? baseCurrency : currency
             return
         }
@@ -274,6 +303,30 @@ struct RecurringRuleEditor: View {
             currency = originalCurrency
         } else {
             amountText = editing.amount?.apiString ?? ""
+            currency = baseCurrency
+        }
+    }
+
+    /// 用一筆已經記下的交易預先填好：同樣的描述、金額、分類、tag，日期當成每期的那一天。
+    private func load(_ transaction: MMCore.Transaction) {
+        let tz = model.timeZone
+        let day = LocalDate(transaction.transactionDate, in: tz)
+        description = transaction.description
+        type = transaction.transactionType
+        category = transaction.category
+        notes = transaction.notes ?? ""
+        frequency = .monthly
+        self.day = day.day
+        startDate = RecurringRule.firstStart(afterTransactionOn: day, today: model.today).date(in: tz)
+        endDate = startDate
+        // 只帶目前看得到的 tag，看不到的使用者也沒辦法取消。
+        let visible = Set(tagChoices.map(\.id))
+        tagIds = Set(transaction.tags.map(\.id)).intersection(visible)
+        if let original = transaction.originalAmount, let originalCurrency = transaction.originalCurrency {
+            amountText = original.apiString
+            currency = originalCurrency
+        } else {
+            amountText = transaction.amount?.apiString ?? ""
             currency = baseCurrency
         }
     }
@@ -311,6 +364,7 @@ struct RecurringRuleEditor: View {
     private func finish() async {
         isSaving = false
         guard error == nil else { return }
+        await model.refreshRecurringRules()  // 首頁的固定收支卡
         await onSaved()
         dismiss()
     }

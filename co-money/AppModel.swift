@@ -70,6 +70,8 @@ final class AppModel {
     private(set) var tags: [Tag] = []
     /// 目前帳本的匯率。存進快取，出國沒有網路時記外幣也看得到（N5）。
     private(set) var exchangeRates: [ExchangeRate] = []
+    /// 目前帳本的固定收支（重複交易規則，N8），首頁卡片用。存進快取；nil 是還沒讀過（不顯示卡片）。
+    private(set) var recurringRules: [RecurringRule]?
     /// 選定月份的交易。
     private(set) var transactions: [MMCore.Transaction] = []
     private(set) var parseJobs: [ParseJob] = []
@@ -269,6 +271,7 @@ final class AppModel {
         previousSummary = []
         tags = []
         exchangeRates = []
+        recurringRules = nil
         parseJobs = []
         outboxItems = []
         updatedAt = nil
@@ -369,7 +372,18 @@ final class AppModel {
             }
         }
         await refreshExchangeRates(ledger)
+        await refreshRecurringRules()
     }
+
+    /// 重新讀目前帳本的固定收支（改了規則之後也呼叫）。讀不到（離線）就留著快取裡的。
+    func refreshRecurringRules() async {
+        guard phase == .ready, let ledger = selectedLedger,
+              let rules = try? await api.recurringRules(ledger: ledger.id) else { return }
+        cache.save(rules, key: recurringKey(ledger.id))
+        if selectedLedgerId == ledger.id { recurringRules = rules }
+    }
+
+    private func recurringKey(_ ledgerId: UUID) -> String { "\(ledgerId.apiString)-recurring" }
 
     /// 匯率跟月份無關，一個帳本一份快取。讀不到（離線）就留著快取裡的。
     private func refreshExchangeRates(_ ledger: Ledger) async {
@@ -398,6 +412,7 @@ final class AppModel {
         setSelectedLedger(id)
         clearLedgerData()
         exchangeRates = []
+        recurringRules = nil
         loadFromCache()
         await refreshLedgerData()
     }
@@ -443,6 +458,9 @@ final class AppModel {
         }
         if let ledger = selectedLedger, let cached = cache.load([ExchangeRate].self, key: ratesKey(ledger.id)) {
             exchangeRates = cached.value
+        }
+        if let ledger = selectedLedger, let cached = cache.load([RecurringRule].self, key: recurringKey(ledger.id)) {
+            recurringRules = cached.value
         }
     }
 

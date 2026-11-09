@@ -40,7 +40,7 @@ struct ProfileView: View {
                                 }
                             }
                         }
-                        NavigationLink("重複交易") { RecurringRulesView() }
+                        NavigationLink("固定收支") { RecurringRulesView() }
                     }
                     Section {
                         Picker("伺服器", selection: Binding(
