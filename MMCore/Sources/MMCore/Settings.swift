@@ -81,9 +81,18 @@ extension RecurringRule {
 }
 
 extension Array where Element == RecurringRule {
-    /// 首頁「固定收支」卡：之後還會產生交易的規則，依下次執行日排序。
+    /// 之後還會產生交易的規則，依下次執行日排序。
     public func upcoming() -> [RecurringRule] {
         filter(\.willRunAgain).sorted { $0.nextRunDate < $1.nextRunDate }
+    }
+
+    /// 交易分頁的「預定」：下次執行日在這個月、而且不早於今天的規則。
+    /// 早於今天的代表後端已經記了或正要記，不能再顯示成預定，否則會和真的交易重複出現。
+    /// 後端只給下一次的日期，所以每週的規則在一個月裡只會顯示最近的一次。
+    public func scheduled(in month: YearMonth, today: LocalDate) -> [RecurringRule] {
+        upcoming().filter { rule in
+            YearMonth(year: rule.nextRunDate.year, month: rule.nextRunDate.month) == month && rule.nextRunDate >= today
+        }
     }
 }
 

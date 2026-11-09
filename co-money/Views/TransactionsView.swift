@@ -2,12 +2,22 @@ import MMCore
 import SwiftUI
 
 /// 交易列表（設計畫布「Transactions」）：依日期分組，每組顯示當天花費。
+///
+/// 這個月接下來會自動記的固定收支，以「預定」列顯示在它的日期裡（不算進花費），點了可以修改規則。
 struct TransactionsView: View {
     @Environment(AppModel.self) private var model
     @State private var category: TransactionCategory?
     @State private var deleteError: String?
     @State private var editing: MMCore.Transaction?
+    @State private var editingRule: RecurringRule?
     @State private var offlineNotice = false
+
+    private struct DayGroup {
+        let day: LocalDate
+        let transactions: [MMCore.Transaction]
+        let scheduled: [RecurringRule]
+        let spent: Money
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,6 +31,11 @@ struct TransactionsView: View {
                     }
                     ForEach(days, id: \.day) { group in
                         Section {
+                            ForEach(group.scheduled) { rule in
+                                ScheduledRow(rule: rule)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { editingRule = rule }
+                            }
                             ForEach(group.transactions) { transaction in
                                 TransactionRow(transaction: transaction, showDay: false)
                                     .contentShape(Rectangle())
@@ -40,7 +55,9 @@ struct TransactionsView: View {
                             HStack {
                                 Text(DateText.dayHeader(group.day, today: model.today))
                                 Spacer()
-                                Text("花費 \(group.spent.display)")
+                                if !group.transactions.isEmpty {
+                                    Text("花費 \(group.spent.display)")
+                                }
                             }
                         }
                     }
@@ -55,6 +72,9 @@ struct TransactionsView: View {
             }
             .sheet(item: $editing) { transaction in
                 QuickEntryView(editing: transaction)
+            }
+            .sheet(item: $editingRule) { rule in
+                RecurringRuleEditor(editing: rule)
             }
             .alert("需要連線", isPresented: $offlineNotice) {
                 Button("好") {}
@@ -74,15 +94,23 @@ struct TransactionsView: View {
         return model.transactions.filter { $0.category == category }
     }
 
-    private var days: [(day: LocalDate, transactions: [MMCore.Transaction], spent: Money)] {
+    /// 這個月預定的固定收支（分類篩選也套用）。
+    private var scheduled: [RecurringRule] {
+        let rules = (model.recurringRules ?? []).scheduled(in: model.month, today: model.today)
+        guard let category else { return rules }
+        return rules.filter { $0.category == category }
+    }
+
+    private var days: [DayGroup] {
         let groups = Dictionary(grouping: filtered) { LocalDate($0.transactionDate, in: model.timeZone) }
-        return groups.keys.sorted(by: >).map { day in
-            let list = groups[day]!
+        let scheduledGroups = Dictionary(grouping: scheduled, by: \.nextRunDate)
+        return Set(groups.keys).union(scheduledGroups.keys).sorted(by: >).map { day in
+            let list = groups[day] ?? []
             let spent = list.reduce(Money.zero) { total, transaction in
                 let amount = transaction.amount ?? .zero
                 return transaction.transactionType == .expense ? total + amount : total - amount
             }
-            return (day, list, spent)
+            return DayGroup(day: day, transactions: list, scheduled: scheduledGroups[day] ?? [], spent: spent)
         }
     }
 
@@ -167,5 +195,34 @@ struct PendingRow: View {
             }
         }
         .padding(.vertical, 6)
+    }
+}
+
+/// 預定會自動記帳的固定收支。還不是交易：不算進花費，到了那天由後端產生。
+struct ScheduledRow: View {
+    let rule: RecurringRule
+
+    var body: some View {
+        HStack(spacing: 12) {
+            CategoryIcon(category: rule.category).opacity(0.5)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(rule.description).foregroundStyle(.secondary)
+                Label("預定・自動記帳", systemImage: "arrow.triangle.2.circlepath")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(amountText)
+                .font(.body.monospacedDigit())
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 6)
+    }
+
+    private var amountText: String {
+        if let original = rule.originalAmount, let currency = rule.originalCurrency {
+            return "\(currency) \(original.display)"
+        }
+        return (rule.amount ?? .zero).signed(for: rule.transactionType)
     }
 }

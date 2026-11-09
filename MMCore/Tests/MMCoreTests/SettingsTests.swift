@@ -35,6 +35,25 @@ struct SettingsTests {
         #expect(rules.upcoming().map(\.description) == ["房租", "保母費", "最後一期"])
     }
 
+    @Test("交易分頁的「預定」：之後還會產生、下次執行日在這個月、而且不早於今天")
+    func scheduledInMonth() throws {
+        let decoder = APICoding.decoder()
+        func rule(_ json: String) throws -> RecurringRule { try decoder.decode(RecurringRule.self, from: Data(json.utf8)) }
+        let rules = try [
+            rule(recurringRuleJSON(description: "保母費", next: "2026-11-15")),
+            rule(recurringRuleJSON(description: "今天的", next: "2026-11-09")),
+            rule(recurringRuleJSON(description: "昨天的", next: "2026-11-08")),  // 後端已經記了或正要記
+            rule(recurringRuleJSON(description: "房租", next: "2026-12-05")),     // 下個月
+            rule(recurringRuleJSON(description: "停用的", next: "2026-11-20", isActive: false)),
+        ]
+        let today = LocalDate(year: 2026, month: 11, day: 9)
+
+        #expect(rules.scheduled(in: YearMonth(year: 2026, month: 11), today: today).map(\.description)
+                == ["今天的", "保母費"])
+        #expect(rules.scheduled(in: YearMonth(year: 2026, month: 12), today: today).map(\.description) == ["房租"])
+        #expect(rules.scheduled(in: YearMonth(year: 2026, month: 10), today: today).isEmpty)
+    }
+
     @Test("從一筆交易設定固定收支：從交易的隔天開始（這筆不會再被產生一次），但不早於今天（不補產生過去的）")
     func firstStartFromTransaction() {
         let today = LocalDate(year: 2026, month: 11, day: 9)
