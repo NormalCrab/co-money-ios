@@ -146,7 +146,17 @@ struct TransactionRow: View {
             CategoryIcon(category: transaction.category)
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.description).font(.body)
-                Text(meta).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                HStack(spacing: 6) {
+                    Text(meta).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    // tag 用色點，名稱太長會擠掉其他資訊；點進修改畫面或預算頁看得到名稱。
+                    if !transaction.tags.isEmpty {
+                        HStack(spacing: 3) {
+                            ForEach(transaction.tags) { TagDot(key: $0.colorKey) }
+                        }
+                        .accessibilityElement()
+                        .accessibilityLabel(transaction.tags.map(\.name).joined(separator: "、"))
+                    }
+                }
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
@@ -168,7 +178,6 @@ struct TransactionRow: View {
         }
         parts.append(transaction.payer.username)
         if transaction.transactionType == .income { parts.append("收入") }
-        parts += transaction.tags.map(\.name)
         if transaction.recurringRule != nil { parts.append("固定收支") }
         return parts.joined(separator: "・")
     }

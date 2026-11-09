@@ -131,17 +131,25 @@ struct HomeView: View {
                 Text("預算").font(.headline)
                 Spacer()
             }
+            // 點一個預算看掛在上面的交易。
             ForEach(model.monthBudgets.prefix(3)) { tag in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(tag.name).font(.subheadline)
-                        Spacer()
-                        Text("\(tag.spent.display) / \(tag.budgetAmount?.display ?? "")")
-                            .font(.subheadline.monospacedDigit())
-                            .foregroundStyle(.secondary)
+                NavigationLink { TagDetailView(tag: tag) } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 6) {
+                            TagDot(key: tag.colorKey)
+                            Text(tag.name).font(.subheadline)
+                            Spacer()
+                            Text("\(tag.spent.display) / \(tag.budgetAmount?.display ?? "")")
+                                .font(.subheadline.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                            Image(systemName: "chevron.right").font(.caption2.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        BudgetBar(tag: tag)
                     }
-                    BudgetBar(tag: tag)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
         .card()

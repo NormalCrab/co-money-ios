@@ -2,10 +2,9 @@ import MMCore
 import SwiftUI
 
 /// 預算（設計畫布「Budgets」）：期限和選定月份重疊的 tag（§12：看期限，不看封存，過去的月份也看得到）。
-/// 新增、修改、設結束日都在手機上做（N6、N7）。
+/// 新增、修改、設結束日都在手機上做（N6、N7）。點一個 tag 進明細頁看它的交易，修改在明細頁右上角。
 struct BudgetsView: View {
     @Environment(AppModel.self) private var model
-    @State private var editing: Tag?
     @State private var creatingOnce = false
     @State private var creatingPeriodic = false
 
@@ -16,8 +15,7 @@ struct BudgetsView: View {
                 List {
                     Section {
                         ForEach(model.monthTags) { tag in
-                            Button { editing = tag } label: { BudgetRow(tag: tag) }
-                                .buttonStyle(.plain)
+                            NavigationLink { TagDetailView(tag: tag) } label: { BudgetRow(tag: tag) }
                         }
                         if model.monthTags.isEmpty {
                             Text("這個月沒有預算，按右上角的「＋」新增。").foregroundStyle(.secondary)
@@ -46,9 +44,6 @@ struct BudgetsView: View {
                     }
                 }
             }
-            .sheet(item: $editing) { tag in
-                BudgetEditor(editing: tag)
-            }
             .sheet(isPresented: $creatingOnce) {
                 BudgetEditor()
             }
@@ -65,6 +60,7 @@ struct BudgetRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
+                TagDot(key: tag.colorKey, size: 10)
                 Text(tag.name).font(.headline)
                 if tag.isEnded == true {
                     Text("已結束").font(.caption2)

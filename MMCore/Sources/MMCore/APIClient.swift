@@ -55,6 +55,13 @@ public struct APIClient: Sendable {
         ])
     }
 
+    /// 掛了這個 tag 的全部交易（tag 明細頁，v2-design §12.10）。不限月份：tag 的期限可能跨好幾個月。
+    public func transactions(ledger: UUID, tag: UUID) async throws -> [Transaction] {
+        try await getAllPages("api/v2/transactions/", query: [
+            "ledger": ledger.apiString, "tag": tag.apiString, "page_size": "200",
+        ])
+    }
+
     /// 建立交易。同一個 `id` 重送時後端回 200 和既有的那筆。
     public func createTransaction(_ input: TransactionInput) async throws -> Created<Transaction> {
         let response = try await send("POST", "api/v2/transactions/", json: input)

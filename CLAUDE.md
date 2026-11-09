@@ -49,6 +49,7 @@ MMCore/             Swift Package（本地套件），不依賴 UIKit / SwiftUI�
     InvoiceQR.swift    台灣電子發票 QR 解碼
     ReceiptText.swift  OCR 結果排版、ParseJobWaiter（輪詢）、JSONCache
     Calendar.swift     YearMonth（依帳本時區）、DateText（「今天 10/27（二）」）
+    TagColors.swift    tag 自動配色（不存後端；週期 tag 依規則配色，每一期同色）
   Tests/MMCoreTests/   Swift Testing；LiveTests 對真的後端（平常跳過）
 co-money/           SwiftUI app（只能在 Mac 編譯）
   MMApp.swift        @main、TabView、回前景同步、BGAppRefreshTask
@@ -57,7 +58,7 @@ co-money/           SwiftUI app（只能在 Mac 編譯）
                      ReceiptScanner（Vision OCR + QR）、ReminderCenter（提醒記帳的本機通知）
   Views/             Home、QuickEntry、VoiceEntry（含打字）、ReceiptEntry、DraftReview（確認解析結果，
                      含 ParseProgress）、Inbox（待處理）、Transactions、Budgets、BudgetEditors、Profile、
-                     Login、LedgerViews、RecurringRulesView、Components
+                     Login、LedgerViews、RecurringRulesView、TagDetailView（tag 明細）、Components
   Assets.xcassets    App icon（沿用 co-money 的）
   UI-Mockups/        舊版的設計稿圖片，不是 v2 的設計
 family_account/     另一個早期的獨立 SwiftUI 雛型（含 BACKEND_API_SPEC.md），和 v2 無關，不要拿來混用

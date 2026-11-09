@@ -33,6 +33,21 @@ struct APIClientTests {
         #expect(url.contains("year=2026"))
     }
 
+    @Test("tag 明細的交易：帶帳本和 tag，不限月份")
+    func transactionsByTag() async throws {
+        let (client, transport, _) = makeClient { _ in
+            json(200, #"{"count": 0, "next": null, "previous": null, "results": []}"#)
+        }
+        let tag = UUID()
+
+        _ = try await client.transactions(ledger: ledgerId, tag: tag)
+
+        let url = transport.requests[0].url.absoluteString
+        #expect(url.contains("ledger=\(ledgerId.apiString)"))
+        #expect(url.contains("tag=\(tag.apiString)"))
+        #expect(!url.contains("month="))
+    }
+
     @Test("分頁會一直讀到最後一頁")
     func readsAllPages() async throws {
         let (client, transport, _) = makeClient { request in

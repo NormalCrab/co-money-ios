@@ -60,6 +60,32 @@ struct CategoryIcon: View {
     }
 }
 
+/// tag 的色盤：用系統顏色，深色模式會自動調整。哪個 tag 用哪格由 `TagColors` 決定。
+enum TagPalette {
+    static let colors: [Color] = [.blue, .green, .purple, .pink, .orange, .teal, .indigo, .brown, .red, .yellow]
+}
+
+extension AppModel {
+    /// tag 的顏色。這個月的 tag 一起分配，盡量不撞色；不在這個月的 tag 用它最想要的顏色。
+    func tagColor(for key: UUID) -> Color {
+        let count = TagPalette.colors.count
+        let slot = TagColors.assign(tags.map(\.colorKey), count: count)[key]
+            ?? TagColors.preferredSlot(for: key, count: count)
+        return TagPalette.colors[slot]
+    }
+}
+
+/// tag 的色點：首頁和交易分頁用它代替 tag 名稱；有顯示名稱的地方也放一個，讓人對得出顏色是哪個 tag。
+struct TagDot: View {
+    @Environment(AppModel.self) private var model
+    let key: UUID
+    var size: CGFloat = 8
+
+    var body: some View {
+        Circle().fill(model.tagColor(for: key)).frame(width: size, height: size)
+    }
+}
+
 /// 頂部的細橫幅：離線時「離線中・資料更新於 10:42」（§4.5）；
 /// 連得上但讀取失敗（例如伺服器 5xx）時顯示原因，提醒畫面上不是最新的資料。
 struct OfflineBanner: View {

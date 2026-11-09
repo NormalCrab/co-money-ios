@@ -208,6 +208,7 @@ struct RecurringRuleEditor: View {
                                 if tagIds.contains(tag.id) { tagIds.remove(tag.id) } else { tagIds.insert(tag.id) }
                             } label: {
                                 HStack {
+                                    TagDot(key: tag.colorKey)
                                     Text(tag.name).foregroundStyle(.primary)
                                     Spacer()
                                     if tagIds.contains(tag.id) {
