@@ -63,7 +63,7 @@ struct ProfileView: View {
             .task {
                 // 使用者可能在「設定」裡把通知關掉了：開著提醒卻收不到時要說明。
                 let isDenied = await model.reminders.isDenied
-                notificationsDenied = model.reminderSettings.isEnabled && isDenied
+                notificationsDenied = model.remindersEnabled && isDenied
                 invitationCount = (try? await model.api.myInvitations().count) ?? 0
             }
             .confirmationDialog(logoutMessage, isPresented: $confirmLogout, titleVisibility: .visible) {
@@ -80,27 +80,16 @@ struct ProfileView: View {
     }
 }
 
-/// 提醒記帳：開關、時間、星期。打開時才詢問通知權限（預設關閉，比較不會被直接拒絕）。
+/// 提醒記帳：每天下午 3 點、晚上 9 點，點通知直接打開「記一筆」。
+/// 打開時才詢問通知權限（預設關閉，比較不會被直接拒絕）。
 private struct ReminderSection: View {
     @Environment(AppModel.self) private var model
     @Binding var denied: Bool
 
-    private static let weekdayNames = ["一", "二", "三", "四", "五", "六", "日"]  // ISO：1 是週一
-
-    private var settings: ReminderSettings { model.reminderSettings }
-
     var body: some View {
         Section {
-            Toggle("提醒記帳", isOn: Binding(get: { settings.isEnabled }, set: { on in Task { await setEnabled(on) } }))
-            if settings.isEnabled {
-                DatePicker("時間", selection: timeBinding, displayedComponents: .hourAndMinute)
-                HStack(spacing: 6) {
-                    ForEach(1...7, id: \.self) { day in
-                        weekdayButton(day)
-                    }
-                }
-                .padding(.vertical, 2)
-            }
+            Toggle("提醒記帳", isOn: Binding(get: { model.remindersEnabled },
+                                         set: { on in Task { await setEnabled(on) } }))
             if denied {
                 Text("通知權限被關掉了，收不到提醒。").font(.footnote).foregroundStyle(Palette.warning)
                 Button("開啟設定") {
@@ -111,44 +100,8 @@ private struct ReminderSection: View {
         } header: {
             Text("提醒")
         } footer: {
-            Text("到了設定的時間，今天還沒記帳就提醒你；今天已經記過就不提醒。")
+            Text("每天下午 3 點和晚上 9 點提醒你記帳，點通知就能直接記一筆。")
         }
-    }
-
-    private func weekdayButton(_ day: Int) -> some View {
-        let isOn = settings.weekdays.contains(day)
-        return Button {
-            var updated = settings
-            if isOn {
-                guard updated.weekdays.count > 1 else { return }  // 至少留一天，全關請用上面的開關
-                updated.weekdays.remove(day)
-            } else {
-                updated.weekdays.insert(day)
-            }
-            Task { await model.updateReminderSettings(updated) }
-        } label: {
-            Text(Self.weekdayNames[day - 1])
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, minHeight: 34)
-                .foregroundStyle(isOn ? Palette.accentText : .secondary)
-                .background(isOn ? Palette.accentSoft : Color.clear, in: Circle())
-                .overlay(Circle().stroke(isOn ? Palette.accent : Palette.border, lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("週\(Self.weekdayNames[day - 1])")
-        .accessibilityAddTraits(isOn ? .isSelected : [])
-    }
-
-    private var timeBinding: Binding<Date> {
-        Binding(
-            get: { Calendar.current.date(bySettingHour: settings.hour, minute: settings.minute, second: 0, of: Date()) ?? Date() },
-            set: { date in
-                let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
-                var updated = settings
-                updated.hour = parts.hour ?? updated.hour
-                updated.minute = parts.minute ?? updated.minute
-                Task { await model.updateReminderSettings(updated) }
-            })
     }
 
     private func setEnabled(_ on: Bool) async {
@@ -160,8 +113,6 @@ private struct ReminderSection: View {
             }
         }
         denied = false
-        var updated = settings
-        updated.isEnabled = on
-        await model.updateReminderSettings(updated)
+        await model.setRemindersEnabled(on)
     }
 }

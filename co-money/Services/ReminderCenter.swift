@@ -1,15 +1,20 @@
-import MMCore
 import UserNotifications
 
-/// 提醒記帳的本機通知（不需要後端，也不需要 APNs）：權限、排程、使用者點了通知之後打開「記一筆」。
+/// 提醒記帳的本機通知（不需要後端，也不需要 APNs）：每天下午 3 點、晚上 9 點各一則，點了打開「記一筆」。
 ///
-/// 每天一則、不重複的通知，一次排好接下來的幾天（`ReminderPlanner`），記了一筆就重排、跳過今天。
+/// 用每天重複的通知，排一次就一直有效，app 很久沒打開也照樣提醒。
 /// delegate 的方法由系統在背景執行緒呼叫，所以標成 nonisolated，再切回主執行緒（CLAUDE.md 的 Swift 6 執行緒檢查）。
 @MainActor
 final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
     nonisolated static let categoryId = "reminder"
     nonisolated static let quickEntryAction = "quick-entry"
     private nonisolated static let idPrefix = "reminder-"
+
+    /// 每天的提醒：下午 3 點（午餐和下午的花費）、晚上 9 點（今天其他的花費）。
+    private nonisolated static let daily: [(hour: Int, body: String)] = [
+        (15, "午餐和下午的花費記了嗎？花 10 秒記一下。"),
+        (21, "今天的花費都記了嗎？花 10 秒記一下。"),
+    ]
 
     /// 使用者點了提醒（本身或上面的「記一筆」）。
     var onQuickEntry: (() -> Void)?
@@ -35,19 +40,19 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
         get async { await center.notificationSettings().authorizationStatus == .denied }
     }
 
-    /// 取消舊的提醒，照 `days` 重新排。時間不帶時區：出國時在當地的同一個時間提醒。
-    func schedule(days: [LocalDate], hour: Int, minute: Int) async {
+    /// 排好每天的提醒（先取消舊的，重複呼叫也只會有這兩則）。時間不帶時區：出國時在當地的同一個時間提醒。
+    func scheduleDaily() async {
         await cancelAll()
-        for day in days {
+        for reminder in Self.daily {
             let content = UNMutableNotificationContent()
             content.title = "記帳提醒"
-            content.body = "今天的花費記了嗎？花 10 秒記一下。"
+            content.body = reminder.body
             content.sound = .default
             content.categoryIdentifier = Self.categoryId
-            let when = DateComponents(year: day.year, month: day.month, day: day.day, hour: hour, minute: minute)
             let request = UNNotificationRequest(
-                identifier: Self.idPrefix + day.description, content: content,
-                trigger: UNCalendarNotificationTrigger(dateMatching: when, repeats: false))
+                identifier: "\(Self.idPrefix)\(reminder.hour)", content: content,
+                trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: reminder.hour, minute: 0),
+                                                       repeats: true))
             try? await center.add(request)
         }
     }

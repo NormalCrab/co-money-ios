@@ -88,8 +88,8 @@ final class AppModel {
     let connectivity = Connectivity()
     let reminders = ReminderCenter()
 
-    /// 提醒記帳的設定（存在這台手機上）。改設定用 `updateReminderSettings`。
-    private(set) var reminderSettings: ReminderSettings
+    /// 提醒記帳打開了沒（存在這台手機上，預設關閉）。改用 `setRemindersEnabled`。
+    private(set) var remindersEnabled = UserDefaults.standard.bool(forKey: AppModel.remindersKey)
     /// 使用者點了提醒通知：首頁看到就打開「記一筆」，然後清掉。
     var pendingQuickEntry = false
 
@@ -111,8 +111,6 @@ final class AppModel {
         outbox = services.outbox
         cache = services.cache
         selectedLedgerId = UserDefaults.standard.string(forKey: "selectedLedger").flatMap(UUID.init(uuidString:))
-        reminderSettings = UserDefaults.standard.data(forKey: Self.reminderKey)
-            .flatMap { try? JSONDecoder().decode(ReminderSettings.self, from: $0) } ?? ReminderSettings()
         reminders.onQuickEntry = { [weak self] in self?.pendingQuickEntry = true }
     }
 
@@ -321,8 +319,8 @@ final class AppModel {
         syncTask = task
         await task.value
         syncTask = nil
-        // 啟動、回到前景、背景同步都會經過這裡：順便把提醒補滿接下來的幾天。
-        await rescheduleReminders()
+        // 啟動、登入都會經過這裡：照設定和通知權限排好（或取消）每天的提醒。
+        await refreshReminders()
     }
 
     private func performSync() async {
@@ -526,33 +524,21 @@ final class AppModel {
 
     // MARK: 提醒記帳
 
-    private static let reminderKey = "reminder.settings"
-    private static let lastRecordedKey = "reminder.lastRecorded"
+    fileprivate static let remindersKey = "reminder.enabled"
 
-    func updateReminderSettings(_ settings: ReminderSettings) async {
-        reminderSettings = settings
-        if let data = try? JSONEncoder().encode(settings) {
-            UserDefaults.standard.set(data, forKey: Self.reminderKey)
-        }
-        await rescheduleReminders()
+    func setRemindersEnabled(_ on: Bool) async {
+        remindersEnabled = on
+        UserDefaults.standard.set(on, forKey: Self.remindersKey)
+        await refreshReminders()
     }
 
-    /// 今天記過帳了（不管有沒有網路、用哪一種方式）：今天不用再提醒。日期用手機的時區，提醒跟著人走。
-    private func markRecordedToday() async {
-        UserDefaults.standard.set(LocalDate(Date(), in: .current).description, forKey: Self.lastRecordedKey)
-        await rescheduleReminders()
-    }
-
-    /// 照設定重排接下來幾天的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
-    func rescheduleReminders() async {
-        guard phase == .ready, reminderSettings.isEnabled, !(await reminders.isDenied) else {
+    /// 排好每天下午 3 點、晚上 9 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
+    func refreshReminders() async {
+        guard phase == .ready, remindersEnabled, !(await reminders.isDenied) else {
             await reminders.cancelAll()
             return
         }
-        let lastRecorded = UserDefaults.standard.string(forKey: Self.lastRecordedKey).flatMap(LocalDate.init(string:))
-        let days = ReminderPlanner.days(settings: reminderSettings, now: Date(), timeZone: .current,
-                                        lastRecorded: lastRecorded)
-        await reminders.schedule(days: days, hour: reminderSettings.hour, minute: reminderSettings.minute)
+        await reminders.scheduleDaily()
     }
 
     // MARK: 寫入（全部經過待上傳，§4）
@@ -560,7 +546,6 @@ final class AppModel {
     /// 記一筆。先存進待上傳，再試著送出；沒網路也不會失敗（§0 原則 2）。
     func add(_ input: TransactionInput) async {
         await enqueue(.createTransaction(input))
-        await markRecordedToday()
     }
 
     /// 送出解析工作，然後在畫面上等最多 30 秒（§2.2）。
@@ -568,7 +553,6 @@ final class AppModel {
     /// - Returns: 解析好（或失敗）的工作；沒網路或等不到時是 nil，結果之後會出現在「待處理」。
     func submitParse(_ upload: ParseJobUpload) async -> ParseJob? {
         await enqueue(.createParseJob(upload))
-        await markRecordedToday()
         guard !outboxItems.contains(where: { $0.operation == .createParseJob(upload) }) else {
             return nil  // 還沒送出去
         }
