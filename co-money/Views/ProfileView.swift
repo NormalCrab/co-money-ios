@@ -80,7 +80,8 @@ struct ProfileView: View {
     }
 }
 
-/// 提醒記帳：每天 12、15、18、21 點，點通知直接打開「記一筆」。
+/// 提醒記帳：每天 12、15、18、21 點，點通知直接打開「記一筆」，通知上的按鈕可以選記一筆、語音、拍收據。
+/// 「測試：每 10 分鐘提醒」只影響這支手機，試完關掉就回到每天四次。
 /// 預設打開，登入後第一次同步時詢問通知權限（AppModel.refreshReminders）；不想要的人在這裡關掉。
 private struct ReminderSection: View {
     @Environment(AppModel.self) private var model
@@ -94,6 +95,8 @@ private struct ReminderSection: View {
                                          set: { on in Task { await setEnabled(on) } }))
             if model.remindersEnabled && !denied {
                 LabeledContent("下一次提醒", value: next.map(Self.describe) ?? "還沒排好")
+                Toggle("測試：每 10 分鐘提醒", isOn: Binding(get: { model.remindersTestMode },
+                                                     set: { on in Task { await setTestMode(on) } }))
             }
             if denied {
                 Text("通知權限被關掉了，收不到提醒。").font(.footnote).foregroundStyle(Palette.warning)
@@ -105,7 +108,7 @@ private struct ReminderSection: View {
         } header: {
             Text("提醒")
         } footer: {
-            Text("每天中午 12 點、下午 3 點、傍晚 6 點、晚上 9 點問你有沒有花費，點通知就能直接記一筆。")
+            Text("每天中午 12 點、下午 3 點、傍晚 6 點、晚上 9 點問你有沒有花費。點通知直接記一筆；長按通知可以選記一筆、語音或拍收據。")
         }
         .task { await loadNext() }
     }
@@ -120,6 +123,11 @@ private struct ReminderSection: View {
         }
         denied = false
         await model.setRemindersEnabled(on)
+        await loadNext()
+    }
+
+    private func setTestMode(_ on: Bool) async {
+        await model.setRemindersTestMode(on)
         await loadNext()
     }
 

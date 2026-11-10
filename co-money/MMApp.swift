@@ -83,9 +83,9 @@ struct MainTabs: View {
                 .tabItem { Label("我", systemImage: "person") }
                 .tag(Tab.profile)
         }
-        // 點了提醒通知：回到首頁，由首頁打開「記一筆」。
-        .onChange(of: model.pendingQuickEntry) { _, pending in
-            if pending { tab = .home }
+        // 點了提醒通知：回到首頁，由首頁打開對應的記帳畫面。
+        .onChange(of: model.pendingEntry) { _, pending in
+            if pending != nil { tab = .home }
         }
     }
 }

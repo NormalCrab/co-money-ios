@@ -91,8 +91,10 @@ final class AppModel {
     /// 提醒記帳打開了沒（存在這台手機上，預設打開，不想要的人自己到「我」關掉；Alex 2026-11-10）。
     /// 改用 `setRemindersEnabled`。
     private(set) var remindersEnabled = UserDefaults.standard.object(forKey: AppModel.remindersKey) as? Bool ?? true
-    /// 使用者點了提醒通知：首頁看到就打開「記一筆」，然後清掉。
-    var pendingQuickEntry = false
+    /// 測試用：提醒改成每 10 分鐘一次（只影響這支手機，預設關閉）。改用 `setRemindersTestMode`。
+    private(set) var remindersTestMode = UserDefaults.standard.bool(forKey: AppModel.remindersTestKey)
+    /// 使用者點了提醒通知（本身或上面的按鈕）：首頁看到就打開對應的記帳畫面，然後清掉。
+    var pendingEntry: EntryKind?
 
     // MARK: 依賴
 
@@ -112,7 +114,7 @@ final class AppModel {
         outbox = services.outbox
         cache = services.cache
         selectedLedgerId = UserDefaults.standard.string(forKey: "selectedLedger").flatMap(UUID.init(uuidString:))
-        reminders.onQuickEntry = { [weak self] in self?.pendingQuickEntry = true }
+        reminders.onEntry = { [weak self] kind in self?.pendingEntry = kind }
     }
 
     private static func makeServices(server: Server, support: URL, attachments: URL)
@@ -529,6 +531,7 @@ final class AppModel {
     // MARK: 提醒記帳
 
     fileprivate static let remindersKey = "reminder.enabled"
+    fileprivate static let remindersTestKey = "reminder.testEvery10Minutes"
 
     func setRemindersEnabled(_ on: Bool) async {
         remindersEnabled = on
@@ -536,7 +539,13 @@ final class AppModel {
         await refreshReminders()
     }
 
-    /// 排好每天 12、15、18、21 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
+    func setRemindersTestMode(_ on: Bool) async {
+        remindersTestMode = on
+        UserDefaults.standard.set(on, forKey: Self.remindersTestKey)
+        await refreshReminders()
+    }
+
+    /// 排好每天 12、15、18、21 點的提醒（測試模式是每 10 分鐘）。關閉、沒登入、或通知權限被關掉時，全部取消。
     func refreshReminders() async {
         // 預設打開：登入後第一次同步時詢問通知權限。只在 app 在前景時問，系統的詢問才看得到。
         if phase == .ready, remindersEnabled, UIApplication.shared.applicationState == .active,
@@ -546,7 +555,7 @@ final class AppModel {
         let denied = await reminders.isDenied
         // 等完權限才看狀態，排或取消都馬上送出（不再 await），免得先判斷的呼叫比後判斷的晚執行。
         if phase == .ready, remindersEnabled, !denied {
-            reminders.scheduleDaily()
+            reminders.schedule(testMode: remindersTestMode)
         } else {
             reminders.cancelAll()
         }

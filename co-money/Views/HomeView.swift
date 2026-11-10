@@ -8,12 +8,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AppModel.self) private var model
 
-    enum Entry: String, Identifiable {
-        case form, voice, receipt
-        var id: String { rawValue }
-    }
-
-    @State private var entry: Entry?
+    @State private var entry: EntryKind?
     @State private var showInbox = false
     @State private var editing: MMCore.Transaction?
     @State private var offlineNotice = false
@@ -66,17 +61,17 @@ struct HomeView: View {
             } message: {
                 Text("修改或刪除已上傳的交易需要連線。")
             }
-            // 點了提醒通知：打開「記一筆」。冷啟動時通知比首頁先到，所以出現時也要看一次。
-            .onAppear(perform: openQuickEntryIfRequested)
-            .onChange(of: model.pendingQuickEntry) { _, _ in openQuickEntryIfRequested() }
+            // 點了提醒通知（本身或上面的按鈕）：打開對應的記帳畫面。冷啟動時通知比首頁先到，所以出現時也要看一次。
+            .onAppear(perform: openRequestedEntry)
+            .onChange(of: model.pendingEntry) { _, _ in openRequestedEntry() }
         }
     }
 
-    private func openQuickEntryIfRequested() {
-        guard model.pendingQuickEntry else { return }
-        model.pendingQuickEntry = false
+    private func openRequestedEntry() {
+        guard let requested = model.pendingEntry else { return }
+        model.pendingEntry = nil
         editing = nil
-        entry = .form
+        entry = requested
     }
 
     private var monthCard: some View {
@@ -106,17 +101,17 @@ struct HomeView: View {
 
     private var entryButtons: some View {
         HStack(spacing: 10) {
-            entryButton("記一筆", "plus", .form, primary: true)
-            entryButton("語音", "mic", .voice)
-            entryButton("拍收據", "doc.viewfinder", .receipt)
+            ForEach(EntryKind.allCases) { kind in
+                entryButton(kind, primary: kind == .form)
+            }
         }
     }
 
-    private func entryButton(_ title: String, _ symbol: String, _ entry: Entry, primary: Bool = false) -> some View {
-        Button { self.entry = entry } label: {
+    private func entryButton(_ kind: EntryKind, primary: Bool) -> some View {
+        Button { entry = kind } label: {
             VStack(spacing: 6) {
-                Image(systemName: symbol).font(.title3)
-                Text(title).font(.footnote.weight(.medium))
+                Image(systemName: kind.symbol).font(.title3)
+                Text(kind.title).font(.footnote.weight(.medium))
             }
             .frame(maxWidth: .infinity, minHeight: 72)
             .foregroundStyle(primary ? .white : Palette.accentText)
