@@ -88,8 +88,9 @@ final class AppModel {
     let connectivity = Connectivity()
     let reminders = ReminderCenter()
 
-    /// 提醒記帳打開了沒（存在這台手機上，預設關閉）。改用 `setRemindersEnabled`。
-    private(set) var remindersEnabled = UserDefaults.standard.bool(forKey: AppModel.remindersKey)
+    /// 提醒記帳打開了沒（存在這台手機上，預設打開，不想要的人自己到「我」關掉；Alex 2026-11-10）。
+    /// 改用 `setRemindersEnabled`。
+    private(set) var remindersEnabled = UserDefaults.standard.object(forKey: AppModel.remindersKey) as? Bool ?? true
     /// 使用者點了提醒通知：首頁看到就打開「記一筆」，然後清掉。
     var pendingQuickEntry = false
 
@@ -537,6 +538,11 @@ final class AppModel {
 
     /// 排好每天 12、15、18、21 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
     func refreshReminders() async {
+        // 預設打開：登入後第一次同步時詢問通知權限。只在 app 在前景時問，系統的詢問才看得到。
+        if phase == .ready, remindersEnabled, UIApplication.shared.applicationState == .active,
+           await reminders.isNotDetermined {
+            _ = await reminders.requestAuthorization()
+        }
         let denied = await reminders.isDenied
         // 等完權限才看狀態，排或取消都馬上送出（不再 await），免得先判斷的呼叫比後判斷的晚執行。
         if phase == .ready, remindersEnabled, !denied {

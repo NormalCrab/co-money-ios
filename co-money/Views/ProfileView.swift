@@ -81,7 +81,7 @@ struct ProfileView: View {
 }
 
 /// 提醒記帳：每天 12、15、18、21 點，點通知直接打開「記一筆」。
-/// 打開時才詢問通知權限（預設關閉，比較不會被直接拒絕）。
+/// 預設打開，登入後第一次同步時詢問通知權限（AppModel.refreshReminders）；不想要的人在這裡關掉。
 private struct ReminderSection: View {
     @Environment(AppModel.self) private var model
     @Binding var denied: Bool

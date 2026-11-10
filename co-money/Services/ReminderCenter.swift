@@ -43,6 +43,11 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
         get async { await center.notificationSettings().authorizationStatus == .denied }
     }
 
+    /// 還沒問過通知權限。
+    var isNotDetermined: Bool {
+        get async { await center.notificationSettings().authorizationStatus == .notDetermined }
+    }
+
     private nonisolated static var ids: [String] { daily.map { "\(idPrefix)\($0.hour)" } }
 
     /// 排好每天的提醒。同一個 id 會蓋掉舊的，重複呼叫也只會有這兩則。時間不帶時區：出國時在當地的同一個時間提醒。
