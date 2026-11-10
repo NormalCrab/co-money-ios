@@ -85,11 +85,16 @@ struct ProfileView: View {
 private struct ReminderSection: View {
     @Environment(AppModel.self) private var model
     @Binding var denied: Bool
+    /// 系統裡實際排好的下一次提醒，讓人確認提醒真的排好了。
+    @State private var next: Date?
 
     var body: some View {
         Section {
             Toggle("提醒記帳", isOn: Binding(get: { model.remindersEnabled },
                                          set: { on in Task { await setEnabled(on) } }))
+            if model.remindersEnabled && !denied {
+                LabeledContent("下一次提醒", value: next.map(Self.describe) ?? "還沒排好")
+            }
             if denied {
                 Text("通知權限被關掉了，收不到提醒。").font(.footnote).foregroundStyle(Palette.warning)
                 Button("開啟設定") {
@@ -102,6 +107,7 @@ private struct ReminderSection: View {
         } footer: {
             Text("每天下午 3 點和晚上 9 點提醒你記帳，點通知就能直接記一筆。")
         }
+        .task { await loadNext() }
     }
 
     private func setEnabled(_ on: Bool) async {
@@ -114,5 +120,21 @@ private struct ReminderSection: View {
         }
         denied = false
         await model.setRemindersEnabled(on)
+        await loadNext()
+    }
+
+    private func loadNext() async {
+        // 剛送出的排程系統要一下子才查得到。
+        try? await Task.sleep(for: .milliseconds(300))
+        next = await model.reminders.nextReminderDate()
+    }
+
+    /// 「今天 21:00」「明天 15:00」。通知用手機的時間，不是帳本時區。
+    private static func describe(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let time = date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
+        if calendar.isDateInToday(date) { return "今天 \(time)" }
+        if calendar.isDateInTomorrow(date) { return "明天 \(time)" }
+        return date.formatted(.dateTime.month(.defaultDigits).day()) + " " + time
     }
 }

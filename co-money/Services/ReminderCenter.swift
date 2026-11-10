@@ -40,9 +40,13 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
         get async { await center.notificationSettings().authorizationStatus == .denied }
     }
 
-    /// 排好每天的提醒（先取消舊的，重複呼叫也只會有這兩則）。時間不帶時區：出國時在當地的同一個時間提醒。
-    func scheduleDaily() async {
-        await cancelAll()
+    private nonisolated static var ids: [String] { daily.map { "\(idPrefix)\($0.hour)" } }
+
+    /// 排好每天的提醒。同一個 id 會蓋掉舊的，重複呼叫也只會有這兩則。時間不帶時區：出國時在當地的同一個時間提醒。
+    ///
+    /// 排和取消都不等系統回應（沒有 await）：呼叫端判斷完就馬上送出，中間不會被另一次呼叫插隊。
+    /// 以前先 await 查目前排了哪些再刪，兩次呼叫交錯時，晚到的刪除會把剛排好的提醒刪掉。
+    func scheduleDaily() {
         for reminder in Self.daily {
             let content = UNMutableNotificationContent()
             content.title = "記帳提醒"
@@ -53,13 +57,20 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
                 identifier: "\(Self.idPrefix)\(reminder.hour)", content: content,
                 trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: reminder.hour, minute: 0),
                                                        repeats: true))
-            try? await center.add(request)
+            center.add(request, withCompletionHandler: nil)
         }
     }
 
-    func cancelAll() async {
-        let ids = await center.pendingNotificationRequests().map(\.identifier).filter { $0.hasPrefix(Self.idPrefix) }
-        center.removePendingNotificationRequests(withIdentifiers: ids)
+    func cancelAll() {
+        center.removePendingNotificationRequests(withIdentifiers: Self.ids)
+    }
+
+    /// 下一次提醒的時間；沒有排好提醒時是 nil。「我」頁面顯示，讓人確認提醒真的排好了。
+    func nextReminderDate() async -> Date? {
+        await center.pendingNotificationRequests()
+            .filter { $0.identifier.hasPrefix(Self.idPrefix) }
+            .compactMap { ($0.trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate() }
+            .min()
     }
 
     // MARK: UNUserNotificationCenterDelegate

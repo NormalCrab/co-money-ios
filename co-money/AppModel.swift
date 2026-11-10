@@ -259,7 +259,7 @@ final class AppModel {
     var hasUnsentData: Bool { !outboxItems.isEmpty }
 
     func logout() async {
-        await reminders.cancelAll()  // 登出後提醒記帳也沒辦法記
+        reminders.cancelAll()  // 登出後提醒記帳也沒辦法記
         await api.session.logout()
         cache.clear()
         clearData()
@@ -311,6 +311,9 @@ final class AppModel {
     /// 換 token、送出待上傳、再重新讀資料。app 啟動、回到前景、網路恢復時呼叫。
     /// 已經有一個在跑的話就等它，不會同時跑兩個。
     func syncNow() async {
+        // 還沒讀完登入資料時不做事：冷啟動時「回到前景」可能比讀登入資料早，
+        // 那時候同步沒有東西可送，還會因為「沒登入」把提醒取消掉。讀完後 loadSession 會自己同步一次。
+        guard phase == .ready else { return }
         if let syncTask {
             await syncTask.value
             return
@@ -534,11 +537,13 @@ final class AppModel {
 
     /// 排好每天下午 3 點、晚上 9 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
     func refreshReminders() async {
-        guard phase == .ready, remindersEnabled, !(await reminders.isDenied) else {
-            await reminders.cancelAll()
-            return
+        let denied = await reminders.isDenied
+        // 等完權限才看狀態，排或取消都馬上送出（不再 await），免得先判斷的呼叫比後判斷的晚執行。
+        if phase == .ready, remindersEnabled, !denied {
+            reminders.scheduleDaily()
+        } else {
+            reminders.cancelAll()
         }
-        await reminders.scheduleDaily()
     }
 
     // MARK: 寫入（全部經過待上傳，§4）
