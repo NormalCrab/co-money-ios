@@ -80,7 +80,7 @@ struct ProfileView: View {
     }
 }
 
-/// 提醒記帳：每天下午 3 點、晚上 9 點，點通知直接打開「記一筆」。
+/// 提醒記帳：每天 12、15、18、21 點，點通知直接打開「記一筆」。
 /// 打開時才詢問通知權限（預設關閉，比較不會被直接拒絕）。
 private struct ReminderSection: View {
     @Environment(AppModel.self) private var model
@@ -105,7 +105,7 @@ private struct ReminderSection: View {
         } header: {
             Text("提醒")
         } footer: {
-            Text("每天下午 3 點和晚上 9 點提醒你記帳，點通知就能直接記一筆。")
+            Text("每天中午 12 點、下午 3 點、傍晚 6 點、晚上 9 點問你有沒有花費，點通知就能直接記一筆。")
         }
         .task { await loadNext() }
     }

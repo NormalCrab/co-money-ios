@@ -535,7 +535,7 @@ final class AppModel {
         await refreshReminders()
     }
 
-    /// 排好每天下午 3 點、晚上 9 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
+    /// 排好每天 12、15、18、21 點的提醒。關閉、沒登入、或通知權限被關掉時，全部取消。
     func refreshReminders() async {
         let denied = await reminders.isDenied
         // 等完權限才看狀態，排或取消都馬上送出（不再 await），免得先判斷的呼叫比後判斷的晚執行。

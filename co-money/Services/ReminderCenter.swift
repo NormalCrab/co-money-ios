@@ -1,6 +1,7 @@
 import UserNotifications
 
-/// 提醒記帳的本機通知（不需要後端，也不需要 APNs）：每天下午 3 點、晚上 9 點各一則，點了打開「記一筆」。
+/// 提醒記帳的本機通知（不需要後端，也不需要 APNs）：每天中午 12 點、下午 3 點、傍晚 6 點、晚上 9 點各一則，問有沒有花費，點了打開「記一筆」。
+/// 不管今天記過沒有都會提醒，app 開著時也照樣跳出（Alex 2026-11-10）。
 ///
 /// 用每天重複的通知，排一次就一直有效，app 很久沒打開也照樣提醒。
 /// delegate 的方法由系統在背景執行緒呼叫，所以標成 nonisolated，再切回主執行緒（CLAUDE.md 的 Swift 6 執行緒檢查）。
@@ -10,10 +11,12 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
     nonisolated static let quickEntryAction = "quick-entry"
     private nonisolated static let idPrefix = "reminder-"
 
-    /// 每天的提醒：下午 3 點（午餐和下午的花費）、晚上 9 點（今天其他的花費）。
+    /// 每天的提醒：每三個小時問一次這段時間有沒有花費。
     private nonisolated static let daily: [(hour: Int, body: String)] = [
-        (15, "午餐和下午的花費記了嗎？花 10 秒記一下。"),
-        (21, "今天的花費都記了嗎？花 10 秒記一下。"),
+        (12, "早上到中午有花費嗎？有的話花 10 秒記一下。"),
+        (15, "中午到下午有花費嗎？有的話花 10 秒記一下。"),
+        (18, "下午到傍晚有花費嗎？有的話花 10 秒記一下。"),
+        (21, "晚上有花費嗎？有的話花 10 秒記一下。"),
     ]
 
     /// 使用者點了提醒（本身或上面的「記一筆」）。
@@ -49,7 +52,7 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
     func scheduleDaily() {
         for reminder in Self.daily {
             let content = UNMutableNotificationContent()
-            content.title = "記帳提醒"
+            content.title = "有花費嗎？"
             content.body = reminder.body
             content.sound = .default
             content.categoryIdentifier = Self.categoryId
@@ -75,11 +78,11 @@ final class ReminderCenter: NSObject, UNUserNotificationCenterDelegate {
 
     // MARK: UNUserNotificationCenterDelegate
 
-    /// app 開著時不跳出提醒：人已經在 app 裡了。
+    /// app 開著時也跳出提醒（不管如何都提醒），點了一樣打開「記一筆」。
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                             willPresent notification: UNNotification) async
         -> UNNotificationPresentationOptions {
-        []
+        [.banner, .list, .sound]
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
